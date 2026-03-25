@@ -2,6 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/api_response.dart';
+import '../models/freeze_result.dart';
+import '../models/group.dart';
+import '../models/group_day_link.dart';
+import '../models/group_feed_item.dart';
+import '../models/group_member_status.dart';
 import '../models/habit.dart';
 import '../models/habit_completion.dart';
 import '../models/habit_log.dart';
@@ -180,5 +185,163 @@ class ApiService {
       headers: _authHeaders(token),
     );
     return ApiResponse.parseSuccessList(response, HabitLog.fromJson);
+  }
+
+  // ── Groups ──
+
+  Future<List<Group>> getGroups({required String token}) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.groupsPath}'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccessList(response, Group.fromJson);
+  }
+
+  Future<Map<String, dynamic>> createGroup({
+    required String token,
+    required String name,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.groupsPath}'),
+      headers: _authHeaders(token),
+      body: jsonEncode({'name': name}),
+    );
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to create group.',
+      );
+    }
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> getGroupDetail({
+    required String token,
+    required String groupId,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.groupsPath}/$groupId'),
+      headers: _authHeaders(token),
+    );
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to load group.',
+      );
+    }
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> joinGroup({
+    required String token,
+    required String groupId,
+    required String inviteCode,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.groupsPath}/$groupId/join'),
+      headers: _authHeaders(token),
+      body: jsonEncode({'invite_code': inviteCode}),
+    );
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to join group.',
+      );
+    }
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<void> leaveGroup({
+    required String token,
+    required String groupId,
+  }) async {
+    final response = await _client.delete(
+      Uri.parse('$baseUrl${ApiConfig.groupsPath}/$groupId/leave'),
+      headers: _authHeaders(token),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to leave group.',
+      );
+    }
+  }
+
+  Future<List<GroupFeedItem>> getGroupFeed({
+    required String token,
+    required String groupId,
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final response = await _client.get(
+      Uri.parse(
+          '$baseUrl${ApiConfig.groupsPath}/$groupId/feed?limit=$limit&offset=$offset'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccessList(response, GroupFeedItem.fromJson);
+  }
+
+  Future<List<GroupDayLink>> getGroupStreak({
+    required String token,
+    required String groupId,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.groupsPath}/$groupId/streak'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccessList(response, GroupDayLink.fromJson);
+  }
+
+  Future<Map<String, dynamic>> getGroupLeaderboard({
+    required String token,
+    required String groupId,
+    String period = 'week',
+  }) async {
+    final response = await _client.get(
+      Uri.parse(
+          '$baseUrl${ApiConfig.groupsPath}/$groupId/leaderboard?period=$period'),
+      headers: _authHeaders(token),
+    );
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message:
+            error?['message'] as String? ?? 'Failed to load leaderboard.',
+      );
+    }
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  Future<List<GroupMemberStatus>> getGroupMembers({
+    required String token,
+    required String groupId,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.groupsPath}/$groupId/members'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccessList(
+        response, GroupMemberStatus.fromJson);
+  }
+
+  Future<FreezeResult> groupFreeze({
+    required String token,
+    required String groupId,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.groupsPath}/$groupId/freeze'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccess(response, FreezeResult.fromJson);
   }
 }

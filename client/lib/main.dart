@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
+import 'providers/group_provider.dart';
 import 'providers/habit_provider.dart';
 import 'screens/habits_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/social_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,7 @@ class ValenceApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()..tryAutoLogin()),
         ChangeNotifierProvider(create: (_) => HabitProvider()),
+        ChangeNotifierProvider(create: (_) => GroupProvider()),
       ],
       child: MaterialApp(
         title: 'Valence',
@@ -53,10 +56,40 @@ class AuthGate extends StatelessWidget {
           return const RegisterScreen();
         }
         if (auth.user != null) {
-          return const HabitsScreen();
+          return const MainShell();
         }
         return const LoginScreen();
       },
+    );
+  }
+}
+
+class MainShell extends StatefulWidget {
+  const MainShell({super.key});
+
+  @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: const [HabitsScreen(), SocialScreen()],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (i) => setState(() => _currentIndex = i),
+        destinations: const [
+          NavigationDestination(
+              icon: Icon(Icons.track_changes), label: 'Habits'),
+          NavigationDestination(icon: Icon(Icons.groups), label: 'Social'),
+        ],
+      ),
     );
   }
 }

@@ -9,4 +9,6 @@ class ApiConfig {
   static const String refreshPath = '/api/v1/auth/refresh';
 
   static const String habitsPath = '/api/v1/habits';
+  static const String groupsPath = '/api/v1/groups';
+  static const String socialPath = '/api/v1/social';
 }
