@@ -11,4 +11,5 @@ class ApiConfig {
   static const String habitsPath = '/api/v1/habits';
   static const String groupsPath = '/api/v1/groups';
   static const String socialPath = '/api/v1/social';
+  static const String insightsPath = '/api/v1/insights';
 }

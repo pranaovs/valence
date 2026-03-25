@@ -6,6 +6,8 @@ import '../models/freeze_result.dart';
 import '../models/group.dart';
 import '../models/kudos_result.dart';
 import '../models/nudge_result.dart';
+import '../models/insights_result.dart';
+import '../models/motivation_result.dart';
 import '../models/group_day_link.dart';
 import '../models/group_feed_item.dart';
 import '../models/group_member_status.dart';
@@ -381,5 +383,43 @@ class ApiService {
       }),
     );
     return ApiResponse.parseSuccess(response, KudosResult.fromJson);
+  }
+
+  // ── Insights ──
+
+  Future<InsightsResult> getInsights({required String token}) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.insightsPath}'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccess(response, InsightsResult.fromJson);
+  }
+
+  Future<MotivationResult> getMotivation({required String token}) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.insightsPath}/motivation'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccess(response, MotivationResult.fromJson);
+  }
+
+  Future<void> submitReflections({
+    required String token,
+    required List<Map<String, dynamic>> reflections,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.insightsPath}/reflections'),
+      headers: _authHeaders(token),
+      body: jsonEncode(reflections),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message:
+            error?['message'] as String? ?? 'Failed to submit reflections.',
+      );
+    }
   }
 }

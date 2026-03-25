@@ -4,6 +4,7 @@ import '../models/habit_completion.dart';
 import '../providers/auth_provider.dart';
 import '../providers/habit_provider.dart';
 import '../widgets/habit_card.dart';
+import '../widgets/motivation_card.dart';
 import 'habit_detail_screen.dart';
 import 'habit_edit_screen.dart';
 
@@ -143,10 +144,11 @@ class _HabitsScreenState extends State<HabitsScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 8, bottom: 80),
-      itemCount: habitProvider.habits.length,
+      padding: const EdgeInsets.only(top: 0, bottom: 80),
+      itemCount: habitProvider.habits.length + 1,
       itemBuilder: (context, index) {
-        final habit = habitProvider.habits[index];
+        if (index == 0) return const MotivationCard();
+        final habit = habitProvider.habits[index - 1];
         return HabitCard(
           habit: habit,
           onTap: () async {

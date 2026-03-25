@@ -5,7 +5,9 @@ import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'providers/group_provider.dart';
 import 'providers/habit_provider.dart';
+import 'providers/insights_provider.dart';
 import 'screens/habits_screen.dart';
+import 'screens/insights_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/social_screen.dart';
@@ -26,6 +28,7 @@ class ValenceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()..tryAutoLogin()),
         ChangeNotifierProvider(create: (_) => HabitProvider()),
         ChangeNotifierProvider(create: (_) => GroupProvider()),
+        ChangeNotifierProvider(create: (_) => InsightsProvider()),
       ],
       child: MaterialApp(
         title: 'Valence',
@@ -79,7 +82,11 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: const [HabitsScreen(), SocialScreen()],
+        children: const [
+          HabitsScreen(),
+          SocialScreen(),
+          InsightsScreen(),
+        ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
@@ -88,6 +95,8 @@ class _MainShellState extends State<MainShell> {
           NavigationDestination(
               icon: Icon(Icons.track_changes), label: 'Habits'),
           NavigationDestination(icon: Icon(Icons.groups), label: 'Social'),
+          NavigationDestination(
+              icon: Icon(Icons.insights), label: 'Insights'),
         ],
       ),
     );
