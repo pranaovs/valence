@@ -69,14 +69,6 @@ class HabitCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.local_fire_department,
-                            size: 16, color: intensityCol),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${habit.currentStreak} day streak',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(width: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 2),
@@ -90,6 +82,22 @@ class HabitCard extends StatelessWidget {
                                 .textTheme
                                 .labelSmall
                                 ?.copyWith(color: cs.onSecondaryContainer),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: intensityCol.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            habit.intensity[0].toUpperCase() + habit.intensity.substring(1),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(color: intensityCol),
                           ),
                         ),
                       ],
