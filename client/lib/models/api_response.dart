@@ -52,4 +52,24 @@ class ApiResponse {
 
     return fromJson(body['data'] as Map<String, dynamic>);
   }
+
+  static List<T> parseSuccessList<T>(
+    http.Response response,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'An unknown error occurred.',
+      );
+    }
+
+    final data = body['data'] as List;
+    return data
+        .map((item) => fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
 }

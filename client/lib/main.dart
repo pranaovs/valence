@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
-import 'screens/home_screen.dart';
+import 'providers/habit_provider.dart';
+import 'screens/habits_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 
@@ -18,8 +19,11 @@ class ValenceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthProvider()..tryAutoLogin(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()..tryAutoLogin()),
+        ChangeNotifierProvider(create: (_) => HabitProvider()),
+      ],
       child: MaterialApp(
         title: 'Valence',
         debugShowCheckedModeBanner: false,
@@ -49,7 +53,7 @@ class AuthGate extends StatelessWidget {
           return const RegisterScreen();
         }
         if (auth.user != null) {
-          return const HomeScreen();
+          return const HabitsScreen();
         }
         return const LoginScreen();
       },

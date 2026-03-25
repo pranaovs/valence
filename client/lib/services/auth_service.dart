@@ -24,7 +24,7 @@ class AuthService {
   bool get isSupported =>
       kIsWeb || defaultTargetPlatform == TargetPlatform.android;
 
-  Future<String> _getIdToken() async {
+  Future<String> getIdToken() async {
     final user = _firebaseAuth.currentUser;
     if (user == null) throw Exception('No Firebase user signed in.');
     final token = await user.getIdToken(true);
@@ -37,7 +37,7 @@ class AuthService {
       email: email,
       password: password,
     );
-    final token = await _getIdToken();
+    final token = await getIdToken();
     return _apiService.login(firebaseToken: token);
   }
 
@@ -51,7 +51,7 @@ class AuthService {
       idToken: googleAuth.idToken,
     );
     await _firebaseAuth.signInWithCredential(credential);
-    final token = await _getIdToken();
+    final token = await getIdToken();
     return _apiService.login(firebaseToken: token);
   }
 
@@ -66,7 +66,7 @@ class AuthService {
     String? name,
     String? timezone,
   }) async {
-    final token = await _getIdToken();
+    final token = await getIdToken();
     return _apiService.register(
       firebaseToken: token,
       name: name,
@@ -76,7 +76,7 @@ class AuthService {
 
   Future<ValenceUser?> tryRefresh() async {
     if (_firebaseAuth.currentUser == null) return null;
-    final token = await _getIdToken();
+    final token = await getIdToken();
     return _apiService.refresh(firebaseToken: token);
   }
 
