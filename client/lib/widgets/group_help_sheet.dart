@@ -98,6 +98,40 @@ void showGroupHelpSheet(BuildContext context) {
                 ),
               ],
             ),
+            const ExpansionTile(
+              title: Text('Nudges & Kudos',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Nudge',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      SizedBox(height: 4),
+                      Text(
+                        'Nudge a group member who hasn\'t completed their habits yet today. '
+                        'An AI-generated personalized message is sent to encourage them.\n\n'
+                        '• You must complete ALL your habits first before nudging\n'
+                        '• Limit: 5 nudges per day, 1 per person per day\n'
+                        '• May include a fun meme GIF if the receiver has memes enabled',
+                      ),
+                      SizedBox(height: 12),
+                      Text('Kudos',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      SizedBox(height: 4),
+                      Text(
+                        'Send kudos to celebrate a group member who completed all their habits. '
+                        'A quick positive reaction that boosts their weekly contribution score.\n\n'
+                        '• Appears in the group activity feed\n'
+                        '• Contributes to the weekly leaderboard',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

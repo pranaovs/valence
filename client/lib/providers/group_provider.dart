@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import '../models/api_response.dart';
 import '../models/freeze_result.dart';
 import '../models/group.dart';
+import '../models/kudos_result.dart';
+import '../models/nudge_result.dart';
 import '../models/group_day_link.dart';
 import '../models/group_feed_item.dart';
 import '../models/group_member_status.dart';
@@ -179,6 +181,52 @@ class GroupProvider extends ChangeNotifier {
       return null;
     } catch (e) {
       _errorMessage = 'Failed to activate freeze.';
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<NudgeResult?> sendNudge({
+    required String receiverId,
+    required String groupId,
+  }) async {
+    try {
+      final token = await _getToken();
+      return await _apiService.sendNudge(
+        token: token,
+        receiverId: receiverId,
+        groupId: groupId,
+      );
+    } on ApiException catch (e) {
+      _errorMessage = e.message;
+      notifyListeners();
+      return null;
+    } catch (e) {
+      _errorMessage = 'Failed to send nudge.';
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<KudosResult?> sendKudos({
+    required String receiverId,
+    required String groupId,
+    String? habitLogId,
+  }) async {
+    try {
+      final token = await _getToken();
+      return await _apiService.sendKudos(
+        token: token,
+        receiverId: receiverId,
+        groupId: groupId,
+        habitLogId: habitLogId,
+      );
+    } on ApiException catch (e) {
+      _errorMessage = e.message;
+      notifyListeners();
+      return null;
+    } catch (e) {
+      _errorMessage = 'Failed to send kudos.';
       notifyListeners();
       return null;
     }

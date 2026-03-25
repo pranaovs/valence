@@ -219,6 +219,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
     final projectedLink = todayStatus?['projected_link_type'] ??
         todayStatus?['projectedLinkType'] ??
         'broken';
+    final currentUserId = context.read<AuthProvider>().user?.id;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -245,29 +246,131 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
             ),
             if (_todayMembers.isNotEmpty) ...[
               const SizedBox(height: 8),
-              ..._todayMembers.map((m) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Row(
-                      children: [
-                        Icon(
-                          m.allDoneToday
-                              ? Icons.check_circle
-                              : Icons.radio_button_unchecked,
-                          color: m.allDoneToday ? Colors.green : Colors.grey,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(m.name)),
-                        Text('${m.habitsCompleted}/${m.habitsTotal}',
-                            style: Theme.of(context).textTheme.bodySmall),
+              ..._todayMembers.map((m) {
+                final isSelf = m.userId == currentUserId;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Icon(
+                        m.allDoneToday
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked,
+                        color: m.allDoneToday ? Colors.green : Colors.grey,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(m.name)),
+                      Text('${m.habitsCompleted}/${m.habitsTotal}',
+                          style: Theme.of(context).textTheme.bodySmall),
+                      if (!isSelf) ...[
+                        const SizedBox(width: 4),
+                        if (m.allDoneToday)
+                          _kudosButton(m.userId, m.name)
+                        else
+                          _nudgeButton(m.userId, m.name),
                       ],
-                    ),
-                  )),
+                    ],
+                  ),
+                );
+              }),
             ],
           ],
         ),
       ),
     );
+  }
+
+  Widget _nudgeButton(String receiverId, String receiverName) {
+    return IconButton(
+      icon: const Icon(Icons.notifications_active, size: 18),
+      tooltip: 'Nudge $receiverName',
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+      onPressed: () => _sendNudge(receiverId, receiverName),
+    );
+  }
+
+  Widget _kudosButton(String receiverId, String receiverName) {
+    return IconButton(
+      icon: const Icon(Icons.thumb_up, size: 18),
+      tooltip: 'Send kudos to $receiverName',
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+      onPressed: () => _sendKudos(receiverId, receiverName),
+    );
+  }
+
+  Future<void> _sendNudge(String receiverId, String receiverName) async {
+    final result = await context.read<GroupProvider>().sendNudge(
+          receiverId: receiverId,
+          groupId: _group.id,
+        );
+    if (!mounted) return;
+
+    if (result != null) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Nudge sent to $receiverName'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(result.llmGeneratedMessage),
+              if (result.memeGifUrl != null) ...[
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    result.memeGifPreview ?? result.memeGifUrl!,
+                    height: 150,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      _loadData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.read<GroupProvider>().errorMessage ??
+              'Failed to send nudge.'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _sendKudos(String receiverId, String receiverName) async {
+    final result = await context.read<GroupProvider>().sendKudos(
+          receiverId: receiverId,
+          groupId: _group.id,
+        );
+    if (!mounted) return;
+
+    if (result != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Kudos sent to $receiverName!')),
+      );
+      _loadData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.read<GroupProvider>().errorMessage ??
+              'Failed to send kudos.'),
+        ),
+      );
+    }
   }
 
   Widget _buildChainHistory(ColorScheme cs) {

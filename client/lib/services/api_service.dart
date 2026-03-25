@@ -4,6 +4,8 @@ import '../config/api_config.dart';
 import '../models/api_response.dart';
 import '../models/freeze_result.dart';
 import '../models/group.dart';
+import '../models/kudos_result.dart';
+import '../models/nudge_result.dart';
 import '../models/group_day_link.dart';
 import '../models/group_feed_item.dart';
 import '../models/group_member_status.dart';
@@ -343,5 +345,41 @@ class ApiService {
       headers: _authHeaders(token),
     );
     return ApiResponse.parseSuccess(response, FreezeResult.fromJson);
+  }
+
+  // ── Social (Nudge / Kudos) ──
+
+  Future<NudgeResult> sendNudge({
+    required String token,
+    required String receiverId,
+    required String groupId,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.socialPath}/nudge'),
+      headers: _authHeaders(token),
+      body: jsonEncode({
+        'receiver_id': receiverId,
+        'group_id': groupId,
+      }),
+    );
+    return ApiResponse.parseSuccess(response, NudgeResult.fromJson);
+  }
+
+  Future<KudosResult> sendKudos({
+    required String token,
+    required String receiverId,
+    required String groupId,
+    String? habitLogId,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.socialPath}/kudos'),
+      headers: _authHeaders(token),
+      body: jsonEncode({
+        'receiver_id': receiverId,
+        'group_id': groupId,
+        if (habitLogId != null) 'habit_log_id': habitLogId,
+      }),
+    );
+    return ApiResponse.parseSuccess(response, KudosResult.fromJson);
   }
 }
