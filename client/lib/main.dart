@@ -6,6 +6,7 @@ import 'providers/auth_provider.dart';
 import 'providers/group_provider.dart';
 import 'providers/habit_provider.dart';
 import 'providers/insights_provider.dart';
+import 'providers/notification_provider.dart';
 import 'screens/habits_screen.dart';
 import 'screens/insights_screen.dart';
 import 'screens/login_screen.dart';
@@ -29,6 +30,7 @@ class ValenceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => HabitProvider()),
         ChangeNotifierProvider(create: (_) => GroupProvider()),
         ChangeNotifierProvider(create: (_) => InsightsProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: MaterialApp(
         title: 'Valence',

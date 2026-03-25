@@ -6,6 +6,7 @@ import '../models/freeze_result.dart';
 import '../models/group.dart';
 import '../models/kudos_result.dart';
 import '../models/nudge_result.dart';
+import '../models/app_notification.dart';
 import '../models/insights_result.dart';
 import '../models/motivation_result.dart';
 import '../models/group_day_link.dart';
@@ -419,6 +420,40 @@ class ApiService {
         code: error?['code'] as String? ?? 'UNKNOWN',
         message:
             error?['message'] as String? ?? 'Failed to submit reflections.',
+      );
+    }
+  }
+
+  // ── Notifications ──
+
+  Future<List<AppNotification>> getNotifications({
+    required String token,
+    bool unreadOnly = false,
+  }) async {
+    final query = unreadOnly ? '?unread_only=true' : '';
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.notificationsPath}$query'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccessList(response, AppNotification.fromJson);
+  }
+
+  Future<void> markNotificationRead({
+    required String token,
+    required String notificationId,
+  }) async {
+    final response = await _client.post(
+      Uri.parse(
+          '$baseUrl${ApiConfig.notificationsPath}/$notificationId/read'),
+      headers: _authHeaders(token),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ??
+            'Failed to mark notification as read.',
       );
     }
   }

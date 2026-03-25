@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import '../models/habit_completion.dart';
 import '../providers/auth_provider.dart';
 import '../providers/habit_provider.dart';
+import '../providers/notification_provider.dart';
 import '../widgets/habit_card.dart';
 import '../widgets/motivation_card.dart';
 import 'habit_detail_screen.dart';
 import 'habit_edit_screen.dart';
+import 'notifications_screen.dart';
 
 class HabitsScreen extends StatefulWidget {
   const HabitsScreen({super.key});
@@ -21,6 +23,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HabitProvider>().loadHabits();
+      context.read<NotificationProvider>().loadNotifications();
     });
   }
 
@@ -72,6 +75,27 @@ class _HabitsScreenState extends State<HabitsScreen> {
               )
             : null,
         actions: [
+          Consumer<NotificationProvider>(
+            builder: (context, notifProvider, _) {
+              final unread = notifProvider.unreadCount;
+              return IconButton(
+                icon: Badge(
+                  isLabelVisible: unread > 0,
+                  label: Text('$unread'),
+                  child: const Icon(Icons.notifications_outlined),
+                ),
+                tooltip: 'Notifications',
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  );
+                  notifProvider.loadNotifications();
+                },
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Sign out',
