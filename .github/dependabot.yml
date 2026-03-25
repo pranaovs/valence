@@ -1,0 +1,12 @@
+version: 2
+
+updates:
+  # Flutter client (client/)
+  - package-ecosystem: "pub"
+    directory: "/client"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "flutter"
