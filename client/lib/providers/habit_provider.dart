@@ -4,6 +4,7 @@ import '../models/habit.dart';
 import '../models/habit_completion.dart';
 import '../models/habit_log.dart';
 import '../models/habit_miss.dart';
+import '../models/plugin_goal.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
 
@@ -99,6 +100,7 @@ class HabitProvider extends ChangeNotifier {
     String? intensity,
     String? trackingMethod,
     String? pluginId,
+    PluginGoal? pluginGoal,
     String? redirectUrl,
     String? visibility,
   }) async {
@@ -110,6 +112,7 @@ class HabitProvider extends ChangeNotifier {
         intensity: intensity,
         trackingMethod: trackingMethod,
         pluginId: pluginId,
+        pluginGoal: pluginGoal,
         redirectUrl: redirectUrl,
         visibility: visibility,
       );
@@ -132,6 +135,7 @@ class HabitProvider extends ChangeNotifier {
     String? intensity,
     String? trackingMethod,
     String? pluginId,
+    PluginGoal? pluginGoal,
     String? redirectUrl,
     String? visibility,
   }) async {
@@ -144,6 +148,7 @@ class HabitProvider extends ChangeNotifier {
         intensity: intensity,
         trackingMethod: trackingMethod,
         pluginId: pluginId,
+        pluginGoal: pluginGoal,
         redirectUrl: redirectUrl,
         visibility: visibility,
       );

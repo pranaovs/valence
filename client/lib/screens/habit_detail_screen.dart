@@ -257,7 +257,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                               Center(child: CircularProgressIndicator()))
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: HabitHeatmapWidget(logs: _logs),
+                          child: HabitHeatmapWidget(logs: _logs, habit: _habit),
                         ),
                   const SizedBox(height: 32),
                   // Info section

@@ -1,3 +1,5 @@
+import 'plugin_goal.dart';
+
 class Habit {
   final String id;
   final String userId;
@@ -5,6 +7,7 @@ class Habit {
   final String intensity;
   final String trackingMethod;
   final String? pluginId;
+  final PluginGoal? pluginGoal;
   final String? redirectUrl;
   final String visibility;
   final bool isActive;
@@ -24,6 +27,7 @@ class Habit {
     required this.intensity,
     required this.trackingMethod,
     this.pluginId,
+    this.pluginGoal,
     this.redirectUrl,
     required this.visibility,
     required this.isActive,
@@ -38,6 +42,7 @@ class Habit {
   });
 
   factory Habit.fromJson(Map<String, dynamic> json) {
+    final goalRaw = json['pluginGoal'] ?? json['plugin_goal'];
     return Habit(
       id: json['id'] as String,
       userId: (json['userId'] ?? json['user_id']) as String,
@@ -47,6 +52,9 @@ class Habit {
           (json['trackingMethod'] ?? json['tracking_method'] ?? 'manual')
               as String,
       pluginId: (json['pluginId'] ?? json['plugin_id']) as String?,
+      pluginGoal: goalRaw is Map<String, dynamic>
+          ? PluginGoal.fromJson(goalRaw)
+          : null,
       redirectUrl: (json['redirectUrl'] ?? json['redirect_url']) as String?,
       visibility: (json['visibility'] as String?) ?? 'full',
       isActive: (json['isActive'] ?? json['is_active'] ?? true) as bool,

@@ -5,6 +5,7 @@ class HabitLog {
   final bool completed;
   final String? verificationSource;
   final String? proofUrl;
+  final Map<String, dynamic>? pluginMetrics;
   final int? reflectionDifficulty;
   final String? reflectionText;
   final DateTime? completedAt;
@@ -17,6 +18,7 @@ class HabitLog {
     required this.completed,
     this.verificationSource,
     this.proofUrl,
+    this.pluginMetrics,
     this.reflectionDifficulty,
     this.reflectionText,
     this.completedAt,
@@ -24,6 +26,7 @@ class HabitLog {
   });
 
   factory HabitLog.fromJson(Map<String, dynamic> json) {
+    final metricsRaw = json['pluginMetrics'] ?? json['plugin_metrics'];
     return HabitLog(
       id: json['id'] as String?,
       habitId: (json['habitId'] ?? json['habit_id']) as String,
@@ -33,6 +36,9 @@ class HabitLog {
           (json['verificationSource'] ?? json['verification_source'])
               as String?,
       proofUrl: (json['proofUrl'] ?? json['proof_url']) as String?,
+      pluginMetrics: metricsRaw is Map<String, dynamic>
+          ? metricsRaw
+          : null,
       reflectionDifficulty:
           (json['reflectionDifficulty'] ?? json['reflection_difficulty'])
               as int?,

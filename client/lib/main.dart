@@ -81,8 +81,51 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   int _currentIndex = 0;
+  DateTime? _lastScreenTimeReport;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _autoReportScreenTime());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _autoReportScreenTime();
+    }
+  }
+
+  Future<void> _autoReportScreenTime() async {
+    // Throttle: at most once per 15 minutes
+    final now = DateTime.now();
+    if (_lastScreenTimeReport != null &&
+        now.difference(_lastScreenTimeReport!).inMinutes < 15) {
+      return;
+    }
+
+    final pluginProvider = context.read<PluginProvider>();
+    final hasPermission = await pluginProvider.hasScreenTimePermission();
+    if (!hasPermission) return;
+
+    final data = await pluginProvider.getScreenTimeData();
+    if (data == null || data.screenMinutes == 0) return;
+
+    _lastScreenTimeReport = now;
+    await pluginProvider.reportScreenTime(
+      screenMinutes: data.screenMinutes,
+      appUsage: data.appUsage,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

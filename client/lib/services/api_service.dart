@@ -17,6 +17,8 @@ import '../models/habit_completion.dart';
 import '../models/habit_log.dart';
 import '../models/habit_miss.dart';
 import '../models/plugin.dart';
+import '../models/plugin_goal.dart';
+import '../models/plugin_metric.dart';
 import '../models/plugin_status.dart';
 import '../models/user.dart';
 
@@ -92,6 +94,7 @@ class ApiService {
     String? intensity,
     String? trackingMethod,
     String? pluginId,
+    PluginGoal? pluginGoal,
     String? redirectUrl,
     String? visibility,
   }) async {
@@ -103,6 +106,7 @@ class ApiService {
         if (intensity != null) 'intensity': intensity,
         if (trackingMethod != null) 'tracking_method': trackingMethod,
         if (pluginId != null) 'plugin_id': pluginId,
+        if (pluginGoal != null) 'plugin_goal': pluginGoal.toJson(),
         if (redirectUrl != null) 'redirect_url': redirectUrl,
         if (visibility != null) 'visibility': visibility,
       }),
@@ -117,6 +121,7 @@ class ApiService {
     String? intensity,
     String? trackingMethod,
     String? pluginId,
+    PluginGoal? pluginGoal,
     String? redirectUrl,
     String? visibility,
   }) async {
@@ -128,6 +133,7 @@ class ApiService {
         if (intensity != null) 'intensity': intensity,
         if (trackingMethod != null) 'tracking_method': trackingMethod,
         if (pluginId != null) 'plugin_id': pluginId,
+        if (pluginGoal != null) 'plugin_goal': pluginGoal.toJson(),
         if (redirectUrl != null) 'redirect_url': redirectUrl,
         if (visibility != null) 'visibility': visibility,
       }),
@@ -432,7 +438,7 @@ class ApiService {
     final response = await _client.post(
       Uri.parse('$baseUrl${ApiConfig.insightsPath}/reflections'),
       headers: _authHeaders(token),
-      body: jsonEncode({'reflections': reflections}),
+      body: jsonEncode(reflections),
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final body = jsonDecode(response.body) as Map<String, dynamic>;
@@ -519,5 +525,74 @@ class ApiService {
       headers: _authHeaders(token),
     );
     return ApiResponse.parseSuccess(response, PluginStatus.fromJson);
+  }
+
+  Future<List<PluginMetric>> getPluginMetrics({
+    required String token,
+    required String pluginId,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.pluginsPath}/$pluginId/metrics'),
+      headers: _authHeaders(token),
+    );
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to load metrics.',
+      );
+    }
+    final data = body['data'] as Map<String, dynamic>;
+    final metrics = data['metrics'] as List;
+    return metrics
+        .map((m) => PluginMetric.fromJson(m as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> disconnectPlugin({
+    required String token,
+    required String pluginId,
+  }) async {
+    final response = await _client.delete(
+      Uri.parse('$baseUrl${ApiConfig.pluginsPath}/$pluginId'),
+      headers: _authHeaders(token),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message:
+            error?['message'] as String? ?? 'Failed to disconnect plugin.',
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> reportScreenTime({
+    required String token,
+    required int screenMinutes,
+    Map<String, int>? appUsage,
+    String? date,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.pluginsPath}/screen_time/report'),
+      headers: _authHeaders(token),
+      body: jsonEncode({
+        'screen_minutes': screenMinutes,
+        if (appUsage != null) 'app_usage': appUsage,
+        if (date != null) 'date': date,
+      }),
+    );
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message:
+            error?['message'] as String? ?? 'Failed to report screen time.',
+      );
+    }
+    return body['data'] as Map<String, dynamic>;
   }
 }

@@ -9,6 +9,7 @@ class PluginMeta {
   final Color color;
   final List<PluginField> fields;
   final bool isOAuth;
+  final bool isDeviceBased;
 
   const PluginMeta({
     required this.id,
@@ -19,6 +20,7 @@ class PluginMeta {
     required this.color,
     this.fields = const [],
     this.isOAuth = false,
+    this.isDeviceBased = false,
   });
 }
 
@@ -146,18 +148,11 @@ class PluginRegistry {
     PluginMeta(
       id: 'screen_time',
       displayName: 'Screen Time',
-      description: 'Monitor daily screen usage limits',
+      description: 'Track phone usage — succeed by using your phone less',
       category: 'productivity',
       icon: Icons.phone_android,
       color: Colors.purple,
-      fields: [
-        const PluginField(
-          key: 'api_key',
-          label: 'API Key',
-          hint: 'Your API key',
-          obscure: true,
-        ),
-      ],
+      isDeviceBased: true,
     ),
     PluginMeta(
       id: 'todoist',
