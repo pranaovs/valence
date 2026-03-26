@@ -14,6 +14,8 @@ class InsightsProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isMotivationLoading = false;
   String? _errorMessage;
+  String? _rawErrorBody;
+  int? _rawErrorStatusCode;
 
   InsightsProvider({AuthService? authService, ApiService? apiService})
       : _authService = authService ?? AuthService(),
@@ -28,24 +30,34 @@ class InsightsProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isMotivationLoading => _isMotivationLoading;
   String? get errorMessage => _errorMessage;
+  String? get rawErrorBody => _rawErrorBody;
+  int? get rawErrorStatusCode => _rawErrorStatusCode;
 
   void clearError() {
     _errorMessage = null;
+    _rawErrorBody = null;
+    _rawErrorStatusCode = null;
     notifyListeners();
   }
 
   Future<void> loadInsights() async {
     _isLoading = true;
     _errorMessage = null;
+    _rawErrorBody = null;
+    _rawErrorStatusCode = null;
     notifyListeners();
 
     try {
       final token = await _getToken();
       _insights = await _apiService.getInsights(token: token);
+    } on InsightsRawException catch (e) {
+      _errorMessage = e.message;
+      _rawErrorBody = e.rawBody;
+      _rawErrorStatusCode = e.statusCode;
     } on ApiException catch (e) {
       _errorMessage = e.message;
     } catch (e) {
-      _errorMessage = 'Failed to load insights.';
+      _errorMessage = 'Failed to load insights: $e';
     } finally {
       _isLoading = false;
       notifyListeners();

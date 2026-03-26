@@ -10,7 +10,8 @@ class InsightsResult {
   });
 
   factory InsightsResult.fromJson(Map<String, dynamic> json) {
-    final patterns = json['patterns'] as Map<String, dynamic>? ?? {};
+    final rawPatterns = json['patterns'];
+    final patterns = rawPatterns is Map<String, dynamic> ? rawPatterns : <String, dynamic>{};
     final byReasonRaw = patterns['by_reason'] ?? patterns['byReason'] ?? {};
     final byDayRaw = patterns['by_day'] ?? patterns['byDay'] ?? {};
 

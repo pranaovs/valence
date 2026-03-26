@@ -23,6 +23,21 @@ import '../models/plugin_metric.dart';
 import '../models/plugin_status.dart';
 import '../models/user.dart';
 
+class InsightsRawException implements Exception {
+  final String message;
+  final String rawBody;
+  final int statusCode;
+
+  const InsightsRawException({
+    required this.message,
+    required this.rawBody,
+    required this.statusCode,
+  });
+
+  @override
+  String toString() => 'InsightsRawException($statusCode): $message';
+}
+
 class ApiService {
   final String baseUrl;
   final http.Client _client;
@@ -481,7 +496,15 @@ class ApiService {
       Uri.parse('$baseUrl${ApiConfig.insightsPath}'),
       headers: _authHeaders(token),
     );
-    return ApiResponse.parseSuccess(response, InsightsResult.fromJson);
+    try {
+      return ApiResponse.parseSuccess(response, InsightsResult.fromJson);
+    } catch (e) {
+      throw InsightsRawException(
+        message: e.toString(),
+        rawBody: response.body,
+        statusCode: response.statusCode,
+      );
+    }
   }
 
   Future<MotivationResult> getMotivation({required String token}) async {

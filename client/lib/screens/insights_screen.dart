@@ -21,6 +21,31 @@ class _InsightsScreenState extends State<InsightsScreen> {
     });
   }
 
+  void _showRawResponse(InsightsProvider provider) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('API Response (${provider.rawErrorStatusCode ?? '?'})'),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 400,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              provider.rawErrorBody ?? 'No response body',
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<InsightsProvider>();
@@ -64,9 +89,21 @@ class _InsightsScreenState extends State<InsightsScreen> {
               const SizedBox(height: 16),
               Text(provider.errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () => provider.loadInsights(),
-                child: const Text('Retry'),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FilledButton(
+                    onPressed: () => provider.loadInsights(),
+                    child: const Text('Retry'),
+                  ),
+                  if (provider.rawErrorBody != null) ...[
+                    const SizedBox(width: 12),
+                    OutlinedButton(
+                      onPressed: () => _showRawResponse(provider),
+                      child: const Text('Show Response'),
+                    ),
+                  ],
+                ],
               ),
             ],
           ),
