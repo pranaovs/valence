@@ -17,6 +17,8 @@ class Habit {
   final String goalStage;
   final String? lastCompletedDate;
   final bool todayCompleted;
+  final Map<String, dynamic>? frequencyRule;
+  final Map<String, dynamic>? frequencyStatus;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -37,6 +39,8 @@ class Habit {
     required this.goalStage,
     this.lastCompletedDate,
     required this.todayCompleted,
+    this.frequencyRule,
+    this.frequencyStatus,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -70,10 +74,17 @@ class Habit {
           (json['lastCompletedDate'] ?? json['last_completed_date']) as String?,
       todayCompleted:
           (json['completedToday'] ?? json['today_completed'] ?? false) as bool,
+      frequencyRule: _asMap(json['frequencyRule'] ?? json['frequency_rule']),
+      frequencyStatus: _asMap(json['frequencyStatus'] ?? json['frequency_status']),
       createdAt: DateTime.parse(
           (json['createdAt'] ?? json['created_at']) as String),
       updatedAt: DateTime.parse(
           (json['updatedAt'] ?? json['updated_at']) as String),
     );
+  }
+
+  static Map<String, dynamic>? _asMap(dynamic value) {
+    if (value is Map<String, dynamic>) return value;
+    return null;
   }
 }

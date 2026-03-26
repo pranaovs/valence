@@ -17,6 +17,7 @@ import '../models/habit_completion.dart';
 import '../models/habit_log.dart';
 import '../models/habit_miss.dart';
 import '../models/plugin.dart';
+import '../models/shop_item.dart';
 import '../models/plugin_goal.dart';
 import '../models/plugin_metric.dart';
 import '../models/plugin_status.dart';
@@ -76,6 +77,66 @@ class ApiService {
       headers: _authHeaders(firebaseToken),
     );
     return ApiResponse.parseSuccess(response, ValenceUser.fromJson);
+  }
+
+  // ── Users ──
+
+  Future<ValenceUser> getCurrentUser({required String token}) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.usersPath}/me'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccess(response, ValenceUser.fromJson);
+  }
+
+  Future<ValenceUser> updateSettings({
+    required String token,
+    String? timezone,
+    String? personaType,
+    Map<String, bool>? notificationPreferences,
+  }) async {
+    final response = await _client.patch(
+      Uri.parse('$baseUrl${ApiConfig.usersPath}/me/settings'),
+      headers: _authHeaders(token),
+      body: jsonEncode({
+        if (timezone != null) 'timezone': timezone,
+        if (personaType != null) 'persona_type': personaType,
+        if (notificationPreferences != null)
+          'notification_preferences': notificationPreferences,
+      }),
+    );
+    return ApiResponse.parseSuccess(response, ValenceUser.fromJson);
+  }
+
+  Future<ValenceUser> equipCosmetics({
+    required String token,
+    required Map<String, String?> equipped,
+  }) async {
+    final response = await _client.patch(
+      Uri.parse('$baseUrl${ApiConfig.usersPath}/me/equip'),
+      headers: _authHeaders(token),
+      body: jsonEncode(equipped),
+    );
+    return ApiResponse.parseSuccess(response, ValenceUser.fromJson);
+  }
+
+  Future<Map<String, dynamic>> getPublicProfile({
+    required String token,
+    required String userId,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.usersPath}/$userId/profile'),
+      headers: _authHeaders(token),
+    );
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to load profile.',
+      );
+    }
+    return body['data'] as Map<String, dynamic>;
   }
 
   // ── Habits ──
@@ -483,6 +544,70 @@ class ApiService {
             'Failed to mark notification as read.',
       );
     }
+  }
+
+  // ── Shop ──
+
+  Future<List<ShopItem>> getShopItems({
+    required String token,
+    String? category,
+  }) async {
+    final query = category != null ? '?category=$category' : '';
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.shopPath}/items$query'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccessList(response, ShopItem.fromJson);
+  }
+
+  Future<Map<String, dynamic>> purchaseItem({
+    required String token,
+    required String itemId,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.shopPath}/purchase/$itemId'),
+      headers: _authHeaders(token),
+      body: jsonEncode({}),
+    );
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to purchase item.',
+      );
+    }
+    return body['data'] as Map<String, dynamic>;
+  }
+
+  // ── Uploads ──
+
+  Future<Map<String, dynamic>> uploadPhoto({
+    required String token,
+    required List<int> fileBytes,
+    required String filename,
+  }) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl${ApiConfig.uploadsPath}/photo'),
+    );
+    request.headers.addAll(_authHeaders(token));
+    request.files.add(http.MultipartFile.fromBytes(
+      'file',
+      fileBytes,
+      filename: filename,
+    ));
+    final streamedResponse = await _client.send(request);
+    final response = await http.Response.fromStream(streamedResponse);
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to upload photo.',
+      );
+    }
+    return body['data'] as Map<String, dynamic>;
   }
 
   // ── Plugins ──
