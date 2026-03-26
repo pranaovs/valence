@@ -7,9 +7,11 @@ import 'providers/group_provider.dart';
 import 'providers/habit_provider.dart';
 import 'providers/insights_provider.dart';
 import 'providers/notification_provider.dart';
+import 'providers/plugin_provider.dart';
 import 'screens/habits_screen.dart';
 import 'screens/insights_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/plugins_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/social_screen.dart';
 
@@ -31,6 +33,7 @@ class ValenceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GroupProvider()),
         ChangeNotifierProvider(create: (_) => InsightsProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => PluginProvider()),
       ],
       child: MaterialApp(
         title: 'Valence',
@@ -70,6 +73,8 @@ class AuthGate extends StatelessWidget {
 }
 
 class MainShell extends StatefulWidget {
+  static final scaffoldKey = GlobalKey<ScaffoldState>();
+
   const MainShell({super.key});
 
   @override
@@ -81,7 +86,75 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    final user = auth.user;
+
     return Scaffold(
+      key: MainShell.scaffoldKey,
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primary,
+                    child: Text(
+                      user?.name.isNotEmpty == true
+                          ? user!.name[0].toUpperCase()
+                          : '?',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    user?.name ?? 'Valence',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  if (user != null)
+                    Text(
+                      '${user.xp} XP  ·  ${user.sparks} Sparks',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.extension),
+              title: const Text('Plugins'),
+              subtitle: const Text('Connect external services'),
+              onTap: () {
+                Navigator.of(context).pop(); // close drawer
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const PluginsScreen(),
+                  ),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Sign out'),
+              onTap: () {
+                Navigator.of(context).pop();
+                auth.signOut();
+              },
+            ),
+          ],
+        ),
+      ),
       body: IndexedStack(
         index: _currentIndex,
         children: const [

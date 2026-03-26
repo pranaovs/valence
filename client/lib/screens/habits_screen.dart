@@ -9,6 +9,7 @@ import '../widgets/motivation_card.dart';
 import 'habit_detail_screen.dart';
 import 'habit_edit_screen.dart';
 import 'notifications_screen.dart';
+import '../main.dart';
 
 class HabitsScreen extends StatefulWidget {
   const HabitsScreen({super.key});
@@ -43,6 +44,10 @@ class _HabitsScreenState extends State<HabitsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => MainShell.scaffoldKey.currentState?.openDrawer(),
+        ),
         title: const Text('Valence'),
         bottom: user != null
             ? PreferredSize(

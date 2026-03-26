@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../main.dart';
 import '../providers/group_provider.dart';
 import '../widgets/group_card.dart';
 import '../widgets/group_help_sheet.dart';
@@ -128,6 +129,10 @@ class _SocialScreenState extends State<SocialScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => MainShell.scaffoldKey.currentState?.openDrawer(),
+        ),
         title: const Text('Social'),
         actions: [
           IconButton(

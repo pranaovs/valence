@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../main.dart';
 import '../providers/habit_provider.dart';
 import '../providers/insights_provider.dart';
 
@@ -25,6 +26,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => MainShell.scaffoldKey.currentState?.openDrawer(),
+        ),
         title: const Text('Insights'),
         actions: [
           IconButton(

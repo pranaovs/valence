@@ -16,6 +16,8 @@ import '../models/habit.dart';
 import '../models/habit_completion.dart';
 import '../models/habit_log.dart';
 import '../models/habit_miss.dart';
+import '../models/plugin.dart';
+import '../models/plugin_status.dart';
 import '../models/user.dart';
 
 class ApiService {
@@ -456,5 +458,47 @@ class ApiService {
             'Failed to mark notification as read.',
       );
     }
+  }
+
+  // ── Plugins ──
+
+  Future<List<Plugin>> getPlugins({required String token}) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.pluginsPath}'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccessList(response, Plugin.fromJson);
+  }
+
+  Future<void> connectPlugin({
+    required String token,
+    required String pluginId,
+    required Map<String, String> credentials,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl${ApiConfig.pluginsPath}/$pluginId/connect'),
+      headers: _authHeaders(token),
+      body: jsonEncode({'credentials': credentials}),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message:
+            error?['message'] as String? ?? 'Failed to connect plugin.',
+      );
+    }
+  }
+
+  Future<PluginStatus> getPluginStatus({
+    required String token,
+    required String pluginId,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl${ApiConfig.pluginsPath}/$pluginId/status'),
+      headers: _authHeaders(token),
+    );
+    return ApiResponse.parseSuccess(response, PluginStatus.fromJson);
   }
 }
