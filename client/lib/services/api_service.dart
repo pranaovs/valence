@@ -366,6 +366,7 @@ class ApiService {
     final response = await _client.post(
       Uri.parse('$baseUrl${ApiConfig.groupsPath}/$groupId/freeze'),
       headers: _authHeaders(token),
+      body: jsonEncode({}),
     );
     return ApiResponse.parseSuccess(response, FreezeResult.fromJson);
   }
@@ -431,7 +432,7 @@ class ApiService {
     final response = await _client.post(
       Uri.parse('$baseUrl${ApiConfig.insightsPath}/reflections'),
       headers: _authHeaders(token),
-      body: jsonEncode(reflections),
+      body: jsonEncode({'reflections': reflections}),
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final body = jsonDecode(response.body) as Map<String, dynamic>;

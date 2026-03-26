@@ -34,18 +34,19 @@ class ApiResponse {
   ) {
     final body = jsonDecode(response.body) as Map<String, dynamic>;
 
-    if (response.statusCode == 404) {
-      throw const UserNotFoundException();
-    }
-
-    if (response.statusCode == 409) {
-      throw const UserExistsException();
-    }
-
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final error = body['error'] as Map<String, dynamic>?;
+      final code = error?['code'] as String? ?? 'UNKNOWN';
+
+      if (response.statusCode == 404 && code == 'USER_NOT_FOUND') {
+        throw const UserNotFoundException();
+      }
+      if (response.statusCode == 409 && code == 'USER_EXISTS') {
+        throw const UserExistsException();
+      }
+
       throw ApiException(
-        code: error?['code'] as String? ?? 'UNKNOWN',
+        code: code,
         message: error?['message'] as String? ?? 'An unknown error occurred.',
       );
     }
