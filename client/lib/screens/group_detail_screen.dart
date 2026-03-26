@@ -167,11 +167,11 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                   CircularProgressIndicator(
                     value: progress,
                     strokeWidth: 4,
-                    backgroundColor: cs.surfaceContainerHighest,
-                    color: tier.color,
+                    backgroundColor: cs.onSurface.withValues(alpha: 0.08),
+                    color: cs.primary,
                   ),
                   Icon(Icons.local_fire_department,
-                      color: tier.color, size: 24),
+                      color: cs.onSurfaceVariant, size: 24),
                 ],
               ),
             ),
@@ -184,26 +184,30 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                            horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: tier.color.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
+                          color: cs.onSurface.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(tier.name,
-                            style: TextStyle(
-                                color: tier.color,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12)),
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: cs.onSurfaceVariant,
+                                  fontWeight: FontWeight.w600,
+                                )),
                       ),
                       const SizedBox(width: 8),
                       Text('${_group.currentStreak}/$nextTier days',
-                          style: Theme.of(context).textTheme.bodySmall),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: cs.onSurfaceVariant,
+                              )),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Streak: ${_group.currentStreak}  |  Longest: ${_group.longestStreak}  |  Links: ${_group.totalLinks}',
-                    style: Theme.of(context).textTheme.bodySmall,
+                    'Streak: ${_group.currentStreak}  ·  Longest: ${_group.longestStreak}  ·  Links: ${_group.totalLinks}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),
@@ -239,14 +243,16 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                        ?.copyWith(fontWeight: FontWeight.w600)),
                 const Spacer(),
                 Icon(GroupTiers.chainLinkIcon(projectedLink),
-                    color: GroupTiers.chainLinkColor(projectedLink),
-                    size: 20),
+                    color: cs.onSurfaceVariant,
+                    size: 18),
                 const SizedBox(width: 4),
-                Text('$membersDone/$membersTotal done',
-                    style: Theme.of(context).textTheme.bodySmall),
+                Text('$membersDone/$membersTotal',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        )),
               ],
             ),
             if (_todayMembers.isNotEmpty) ...[
@@ -259,9 +265,11 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                     children: [
                       Icon(
                         m.allDoneToday
-                            ? Icons.check_circle
-                            : Icons.radio_button_unchecked,
-                        color: m.allDoneToday ? Colors.green : Colors.grey,
+                            ? Icons.check_rounded
+                            : Icons.circle_outlined,
+                        color: m.allDoneToday
+                            ? cs.primary
+                            : cs.onSurface.withValues(alpha: 0.25),
                         size: 18,
                       ),
                       const SizedBox(width: 8),
@@ -386,11 +394,11 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Chain Link History',
+            Text('Chain History',
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+                    ?.copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             SizedBox(
               height: 40,
@@ -399,6 +407,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                 itemCount: _chainLinks.length,
                 itemBuilder: (context, index) {
                   final link = _chainLinks[index];
+                  final isBroken = link.linkType == 'broken';
                   return Tooltip(
                     message:
                         '${link.date} — ${link.linkType}${link.freezeUsed ? ' (frozen)' : ''}',
@@ -408,15 +417,19 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 2),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: GroupTiers.chainLinkColor(link.linkType),
+                        color: isBroken
+                            ? cs.onSurface.withValues(alpha: 0.08)
+                            : cs.primary.withValues(alpha: link.linkType == 'gold' ? 0.25 : 0.12),
                         border: link.freezeUsed
-                            ? Border.all(color: Colors.blue, width: 2)
+                            ? Border.all(color: cs.outline, width: 1.5)
                             : null,
                       ),
                       child: Icon(
                         GroupTiers.chainLinkIcon(link.linkType),
                         size: 14,
-                        color: Colors.white,
+                        color: isBroken
+                            ? cs.onSurface.withValues(alpha: 0.3)
+                            : cs.primary,
                       ),
                     ),
                   );
@@ -441,7 +454,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+                    ?.copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             ..._leaderboard.map((score) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
@@ -485,7 +498,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+                    ?.copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
             Text(
               'Protect the chain for today. Costs 100 Sparks. Max 1/day.',
@@ -540,7 +553,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                       style: Theme.of(context)
                           .textTheme
                           .titleSmall
-                          ?.copyWith(fontWeight: FontWeight.bold)),
+                          ?.copyWith(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                   Text(_group.inviteCode,
                       style: Theme.of(context)
@@ -581,7 +594,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+                    ?.copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             ..._feed.take(20).map((item) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),

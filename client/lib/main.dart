@@ -8,6 +8,7 @@ import 'providers/habit_provider.dart';
 import 'providers/insights_provider.dart';
 import 'providers/notification_provider.dart';
 import 'providers/plugin_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/habits_screen.dart';
 import 'screens/insights_screen.dart';
 import 'screens/login_screen.dart';
@@ -36,16 +37,83 @@ class ValenceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => InsightsProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => PluginProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: MaterialApp(
+      child: Builder(builder: (context) {
+        final themeMode = context.watch<ThemeProvider>().themeMode;
+        return MaterialApp(
         title: 'Valence',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF546E7A),
+            brightness: Brightness.light,
+          ),
           useMaterial3: true,
+          cardTheme: CardThemeData(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Colors.grey.shade200),
+            ),
+          ),
+          appBarTheme: const AppBarTheme(
+            centerTitle: false,
+            scrolledUnderElevation: 1,
+          ),
+          dividerTheme: DividerThemeData(
+            color: Colors.grey.shade200,
+            thickness: 1,
+          ),
+          navigationBarTheme: NavigationBarThemeData(
+            elevation: 0,
+            indicatorColor: const Color(0xFF546E7A).withValues(alpha: 0.12),
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          ),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            elevation: 1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
         ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF546E7A),
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true,
+          cardTheme: CardThemeData(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+          ),
+          appBarTheme: const AppBarTheme(
+            centerTitle: false,
+            scrolledUnderElevation: 1,
+          ),
+          dividerTheme: DividerThemeData(
+            color: Colors.grey.shade800,
+            thickness: 1,
+          ),
+          navigationBarTheme: NavigationBarThemeData(
+            elevation: 0,
+            indicatorColor: const Color(0xFF546E7A).withValues(alpha: 0.24),
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          ),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            elevation: 1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        themeMode: themeMode,
         home: const AuthGate(),
-      ),
+      );
+      }),
     );
   }
 }
@@ -142,7 +210,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,26 +219,31 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                   CircleAvatar(
                     radius: 24,
                     backgroundColor:
-                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
                     child: Text(
                       user?.name.isNotEmpty == true
                           ? user!.name[0].toUpperCase()
                           : '?',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 20,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     user?.name ?? 'Valence',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                   if (user != null)
                     Text(
                       '${user.xp} XP  ·  ${user.sparks} Sparks',
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                 ],
               ),

@@ -146,13 +146,14 @@ class _ShopScreenState extends State<ShopScreen> {
               child: Center(
                 child: Row(
                   children: [
-                    Icon(Icons.bolt, size: 16, color: cs.tertiary),
-                    const SizedBox(width: 4),
-                    Text('${user.sparks}',
+                    Text('${user.sparks} Sparks',
                         style: Theme.of(context)
                             .textTheme
                             .labelLarge
-                            ?.copyWith(fontWeight: FontWeight.bold)),
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: cs.onSurfaceVariant,
+                            )),
                   ],
                 ),
               ),
@@ -244,14 +245,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   )
                 : FilledButton.tonal(
                     onPressed: () => _purchase(item),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.bolt, size: 14, color: cs.tertiary),
-                        const SizedBox(width: 4),
-                        Text('${item.sparksCost}'),
-                      ],
-                    ),
+                    child: Text('${item.sparksCost} Sparks'),
                   ),
           ),
         );

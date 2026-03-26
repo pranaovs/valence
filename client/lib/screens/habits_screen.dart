@@ -4,6 +4,7 @@ import '../models/habit_completion.dart';
 import '../providers/auth_provider.dart';
 import '../providers/habit_provider.dart';
 import '../providers/notification_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/habit_card.dart';
 import '../widgets/motivation_card.dart';
 import '../widgets/nudge_prompt_sheet.dart';
@@ -65,22 +66,31 @@ class _HabitsScreenState extends State<HabitsScreen> {
                       const EdgeInsets.only(left: 16, right: 16, bottom: 8),
                   child: Row(
                     children: [
-                      Icon(Icons.star, size: 16,
-                          color: Theme.of(context).colorScheme.primary),
-                      const SizedBox(width: 4),
                       Text('${user.xp} XP',
-                          style: Theme.of(context).textTheme.labelMedium),
-                      const SizedBox(width: 16),
-                      Icon(Icons.bolt, size: 16,
-                          color: Theme.of(context).colorScheme.tertiary),
-                      const SizedBox(width: 4),
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              )),
+                      const SizedBox(width: 12),
+                      Container(
+                        width: 3, height: 3,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
                       Text('${user.sparks} Sparks',
-                          style: Theme.of(context).textTheme.labelMedium),
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              )),
                       const Spacer(),
                       Text(
                         user.rank.isNotEmpty ? user.rank[0].toUpperCase() + user.rank.substring(1) : '',
                         style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -109,11 +119,18 @@ class _HabitsScreenState extends State<HabitsScreen> {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Sign out',
-            onPressed: () => auth.signOut(),
-          ),
+          Builder(builder: (context) {
+            final themeProvider = context.watch<ThemeProvider>();
+            return IconButton(
+              icon: Icon(
+                themeProvider.isDark
+                    ? Icons.light_mode_outlined
+                    : Icons.dark_mode_outlined,
+              ),
+              tooltip: themeProvider.isDark ? 'Light mode' : 'Dark mode',
+              onPressed: () => themeProvider.toggle(),
+            );
+          }),
         ],
       ),
       body: RefreshIndicator(
@@ -215,29 +232,28 @@ class _HabitsScreenState extends State<HabitsScreen> {
   }
 
   Widget _buildDailySummary(int done, int total) {
-    final allDone = done == total;
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: total > 0 ? done / total : 0,
-                minHeight: 8,
-                backgroundColor: cs.surfaceContainerHighest,
-                color: allDone ? Colors.green : cs.primary,
+                minHeight: 6,
+                backgroundColor: cs.onSurface.withValues(alpha: 0.08),
+                color: cs.primary,
               ),
             ),
           ),
           const SizedBox(width: 12),
           Text(
-            '$done/$total done',
+            '$done/$total',
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: allDone ? Colors.green : null,
+                  fontWeight: FontWeight.w600,
+                  color: cs.onSurfaceVariant,
                 ),
           ),
         ],

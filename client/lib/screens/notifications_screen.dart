@@ -209,28 +209,8 @@ class _NotificationTile extends StatelessWidget {
   }
 
   Color _typeColor(String type) {
-    switch (type) {
-      case 'morning_activation':
-        return Colors.amber;
-      case 'friend_nudge':
-        return Colors.blue;
-      case 'preemptive_warning':
-        return Colors.orange;
-      case 'reflection_prompt':
-        return Colors.purple;
-      case 'kudos_received':
-        return Colors.green;
-      case 'streak_milestone':
-        return Colors.deepOrange;
-      case 'goal_milestone':
-        return Colors.teal;
-      case 'rank_promotion':
-        return Colors.indigo;
-      case 'weekly_summary':
-        return Colors.blueGrey;
-      default:
-        return Colors.grey;
-    }
+    // All notifications use the same muted color — no visual distraction
+    return const Color(0xFF546E7A);
   }
 
   String _formatTime(DateTime dt) {

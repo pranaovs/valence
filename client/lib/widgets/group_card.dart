@@ -18,8 +18,7 @@ class GroupCard extends StatelessWidget {
     final tier = GroupTiers.getTier(group.tier);
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
@@ -33,48 +32,23 @@ class GroupCard extends StatelessWidget {
                   children: [
                     Text(
                       group.name,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: tier.color.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            tier.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(color: tier.color),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: cs.secondaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '${group.memberCount} members',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(color: cs.onSecondaryContainer),
-                          ),
-                        ),
+                        _badge(context, label: tier.name),
+                        const SizedBox(width: 6),
+                        _badge(context,
+                            label: '${group.memberCount} members'),
                         if (group.role == 'admin') ...[
-                          const SizedBox(width: 8),
-                          Icon(Icons.shield,
-                              size: 14, color: cs.primary),
+                          const SizedBox(width: 6),
+                          Icon(Icons.shield_outlined,
+                              size: 14, color: cs.onSurfaceVariant),
                         ],
                       ],
                     ),
@@ -85,15 +59,12 @@ class GroupCard extends StatelessWidget {
               Column(
                 children: [
                   Icon(Icons.local_fire_department,
-                      color: tier.color, size: 20),
+                      color: cs.onSurfaceVariant, size: 20),
                   Text(
                     '${group.currentStreak}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: tier.color,
+                          color: cs.onSurface,
                         ),
                   ),
                 ],
@@ -101,6 +72,24 @@ class GroupCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _badge(BuildContext context, {required String label}) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: cs.onSurface.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: cs.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
       ),
     );
   }

@@ -265,12 +265,12 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
         child: Row(
           children: [
             if (meta != null) ...[
-              Icon(meta.icon, size: 18, color: meta.color),
+              Icon(meta.icon, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(width: 8),
             ],
             Text(meta?.displayName ?? p.id),
             const SizedBox(width: 8),
-            const Icon(Icons.check_circle, size: 14, color: Colors.green),
+            Icon(Icons.check_rounded, size: 14, color: Theme.of(context).colorScheme.primary),
           ],
         ),
       ));
@@ -283,7 +283,7 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
           value: meta.id,
           child: Row(
             children: [
-              Icon(meta.icon, size: 18, color: meta.color),
+              Icon(meta.icon, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(width: 8),
               Text(meta.displayName),
             ],

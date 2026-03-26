@@ -94,7 +94,7 @@ class FrequencyBarChart extends StatelessWidget {
                   ),
                   BarChartRodData(
                     toY: entry.value.missed.toDouble(),
-                    color: cs.error.withValues(alpha: 0.4),
+                    color: cs.onSurface.withValues(alpha: 0.15),
                     width: 16,
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(4)),

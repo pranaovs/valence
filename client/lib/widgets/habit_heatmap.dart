@@ -61,8 +61,16 @@ class HabitHeatmapWidget extends StatelessWidget {
       ..sort();
     final startDate = DateTime(
         sorted.first.year, sorted.first.month, sorted.first.day);
-    final endDate = DateTime(
-        sorted.last.year, sorted.last.month, sorted.last.day);
+    final today = DateTime.now();
+    final endDate = DateTime(today.year, today.month, today.day);
+
+    // Fill all dates in range so blank squares appear for days with no data
+    for (var d = startDate;
+        !d.isAfter(endDate);
+        d = d.add(const Duration(days: 1))) {
+      final normalized = DateTime(d.year, d.month, d.day);
+      selectedMap.putIfAbsent(normalized, () => 0);
+    }
 
     return SizedBox(
       height: 140,
@@ -71,10 +79,10 @@ class HabitHeatmapWidget extends StatelessWidget {
         endedDate: endDate,
         selectedMap: selectedMap,
         colorMap: {
-          0: cs.surfaceContainerHighest,
-          1: cs.primary.withValues(alpha: 0.3),
-          2: cs.primary.withValues(alpha: 0.6),
-          3: cs.primary,
+          0: cs.onSurface.withValues(alpha: 0.05),
+          1: cs.primary.withValues(alpha: 0.2),
+          2: cs.primary.withValues(alpha: 0.5),
+          3: cs.primary.withValues(alpha: 0.8),
         },
         cellSize: const Size.square(14),
         cellSpaceBetween: 2,

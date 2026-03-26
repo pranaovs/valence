@@ -10,7 +10,6 @@ class HomeScreen extends StatelessWidget {
     final auth = context.watch<AuthProvider>();
     final user = auth.user;
     if (user == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,22 +48,14 @@ class HomeScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  _StatChip(label: '${user.xp} XP'),
+                  const SizedBox(width: 8),
+                  _StatChip(label: '${user.sparks} Sparks'),
+                  const SizedBox(width: 8),
                   _StatChip(
-                    icon: Icons.star,
-                    label: '${user.xp} XP',
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  _StatChip(
-                    icon: Icons.bolt,
-                    label: '${user.sparks} Sparks',
-                    color: colorScheme.tertiary,
-                  ),
-                  const SizedBox(width: 12),
-                  _StatChip(
-                    icon: Icons.military_tech,
-                    label: user.rank.isNotEmpty ? user.rank[0].toUpperCase() + user.rank.substring(1) : 'Unknown',
-                    color: colorScheme.secondary,
+                    label: user.rank.isNotEmpty
+                        ? user.rank[0].toUpperCase() + user.rank.substring(1)
+                        : 'Unknown',
                   ),
                 ],
               ),
@@ -77,21 +68,26 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _StatChip extends StatelessWidget {
-  final IconData icon;
   final String label;
-  final Color color;
 
-  const _StatChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
+  const _StatChip({required this.label});
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      avatar: Icon(icon, color: color, size: 18),
-      label: Text(label),
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: cs.onSurface.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: cs.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
+      ),
     );
   }
 }

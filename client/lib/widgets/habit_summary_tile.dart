@@ -46,8 +46,8 @@ class HabitSummaryTile extends StatelessWidget {
                 children: [
                   CircularProgressIndicator(
                     value: _progress,
-                    strokeWidth: 6,
-                    backgroundColor: cs.surfaceContainerHighest,
+                    strokeWidth: 4,
+                    backgroundColor: cs.onSurface.withValues(alpha: 0.08),
                     color: cs.primary,
                   ),
                   if (habit.todayCompleted)
@@ -116,7 +116,7 @@ class _StatItem extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
+          Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: 4),
           Text(label, style: Theme.of(context).textTheme.bodyMedium),
         ],

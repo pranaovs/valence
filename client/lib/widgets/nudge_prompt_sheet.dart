@@ -128,8 +128,8 @@ class _NudgePromptSheetState extends State<NudgePromptSheet> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.check_circle,
-                                size: 48, color: Colors.green[300]),
+                            Icon(Icons.check_circle_outline,
+                                size: 48, color: Theme.of(context).colorScheme.primary),
                             const SizedBox(height: 12),
                             Text(
                               'Everyone in your groups is done too!',

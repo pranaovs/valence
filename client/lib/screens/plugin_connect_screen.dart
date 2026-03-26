@@ -289,9 +289,9 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundColor: widget.meta.color.withValues(alpha: 0.15),
+              backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
               child: Icon(widget.meta.icon,
-                  color: widget.meta.color, size: 28),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant, size: 28),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -308,8 +308,8 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
             ),
             if (isConnected)
               Chip(
-                avatar: const Icon(Icons.check_circle,
-                    size: 16, color: Colors.green),
+                avatar: Icon(Icons.check_rounded,
+                    size: 16, color: Theme.of(context).colorScheme.primary),
                 label: const Text('Connected'),
                 visualDensity: VisualDensity.compact,
               ),
@@ -425,12 +425,11 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
         ] else ...[
           // Permission granted — show screen time data
           Card(
-            color: Colors.green.withValues(alpha: 0.08),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.green),
+                  Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -591,12 +590,12 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
         children: [
           CircleAvatar(
             radius: 10,
-            backgroundColor: widget.meta.color.withValues(alpha: 0.15),
+            backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
             child: Text(number,
                 style: TextStyle(
                     fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: widget.meta.color)),
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -778,10 +777,11 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
   }
 
   Color _screenTimeColor(int minutes) {
-    if (minutes <= 60) return Colors.green;
-    if (minutes <= 120) return Colors.lightGreen;
-    if (minutes <= 180) return Colors.orange;
-    if (minutes <= 300) return Colors.deepOrange;
-    return Colors.red;
+    // Use primary color with varying opacity — less usage = lighter
+    if (minutes <= 60) return const Color(0xFF546E7A).withValues(alpha: 0.3);
+    if (minutes <= 120) return const Color(0xFF546E7A).withValues(alpha: 0.5);
+    if (minutes <= 180) return const Color(0xFF546E7A).withValues(alpha: 0.65);
+    if (minutes <= 300) return const Color(0xFF546E7A).withValues(alpha: 0.8);
+    return const Color(0xFF546E7A);
   }
 }

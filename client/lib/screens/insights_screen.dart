@@ -134,17 +134,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
         if (insights.byReason.isNotEmpty)
           _buildPatternCard(
             title: 'Misses by Reason',
-            icon: Icons.category,
             data: insights.byReason,
-            colorFn: _reasonColor,
             labelFn: _reasonLabel,
           ),
         if (insights.byDay.isNotEmpty)
           _buildPatternCard(
             title: 'Misses by Day',
-            icon: Icons.calendar_today,
             data: insights.byDay,
-            colorFn: (_) => Theme.of(context).colorScheme.primary,
             labelFn: (k) => k,
           ),
       ],
@@ -152,6 +148,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
   }
 
   Widget _buildAnalysisCard(String analysis) {
+    final cs = Theme.of(context).colorScheme;
     return Card(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -159,20 +156,19 @@ class _InsightsScreenState extends State<InsightsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(Icons.auto_awesome,
-                    size: 20, color: Theme.of(context).colorScheme.primary),
-                const SizedBox(width: 8),
-                Text('AI Analysis',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.bold)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(analysis, style: Theme.of(context).textTheme.bodyMedium),
+            Text('Analysis',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall
+                    ?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurface,
+                    )),
+            const SizedBox(height: 10),
+            Text(analysis,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: cs.onSurfaceVariant,
+                    )),
           ],
         ),
       ),
@@ -181,11 +177,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
   Widget _buildPatternCard({
     required String title,
-    required IconData icon,
     required Map<String, int> data,
-    required Color Function(String) colorFn,
     required String Function(String) labelFn,
   }) {
+    final cs = Theme.of(context).colorScheme;
     final sorted = data.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
     final maxVal = sorted.isNotEmpty ? sorted.first.value : 1;
@@ -197,18 +192,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(icon, size: 20,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
-                const SizedBox(width: 8),
-                Text(title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.bold)),
-              ],
-            ),
+            Text(title,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleSmall
+                    ?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurface,
+                    )),
             const SizedBox(height: 12),
             ...sorted.map((entry) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
@@ -219,24 +210,27 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(labelFn(entry.key),
-                              style: Theme.of(context).textTheme.bodySmall),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: cs.onSurfaceVariant,
+                                  )),
                           Text('${entry.value}',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
-                                  ?.copyWith(fontWeight: FontWeight.bold)),
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: cs.onSurface,
+                                  )),
                         ],
                       ),
                       const SizedBox(height: 4),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(3),
                         child: LinearProgressIndicator(
                           value: entry.value / maxVal,
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                          color: colorFn(entry.key),
-                          minHeight: 8,
+                          backgroundColor: cs.onSurface.withValues(alpha: 0.08),
+                          color: cs.primary,
+                          minHeight: 6,
                         ),
                       ),
                     ],
@@ -246,21 +240,6 @@ class _InsightsScreenState extends State<InsightsScreen> {
         ),
       ),
     );
-  }
-
-  Color _reasonColor(String reason) {
-    switch (reason) {
-      case 'no_energy':
-        return Colors.orange;
-      case 'busy':
-        return Colors.blue;
-      case 'forgot':
-        return Colors.purple;
-      case 'sick':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
   }
 
   String _reasonLabel(String reason) {
@@ -499,12 +478,20 @@ class _ReflectionSheetState extends State<_ReflectionSheet> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelSmall
-                                    ?.copyWith(color: Colors.green)),
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    )),
                             Text('Hard',
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelSmall
-                                    ?.copyWith(color: Colors.red)),
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    )),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -531,19 +518,9 @@ class _ReflectionSheetState extends State<_ReflectionSheet> {
   }
 
   Color _difficultyColor(int rating) {
-    switch (rating) {
-      case 1:
-        return Colors.green;
-      case 2:
-        return Colors.lightGreen;
-      case 3:
-        return Colors.orange;
-      case 4:
-        return Colors.deepOrange;
-      case 5:
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
+    final cs = Theme.of(context).colorScheme;
+    // Use primary color with increasing opacity for difficulty levels
+    final opacity = 0.3 + (rating - 1) * 0.175;
+    return cs.primary.withValues(alpha: opacity.clamp(0.0, 1.0));
   }
 }

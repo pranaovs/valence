@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.web, size: 64, color: colorScheme.primary),
+                Icon(Icons.web, size: 64, color: colorScheme.onSurfaceVariant),
                 const SizedBox(height: 16),
                 Text(
                   'Valence',
@@ -88,8 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Icon(
                       Icons.local_fire_department_rounded,
-                      size: 72,
-                      color: colorScheme.primary,
+                      size: 64,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(height: 8),
                     Text(

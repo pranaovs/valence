@@ -58,9 +58,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.celebration_rounded,
-                      size: 72,
-                      color: colorScheme.primary,
+                      Icons.check_circle_outline_rounded,
+                      size: 64,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(height: 8),
                     Text(

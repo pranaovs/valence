@@ -33,27 +33,26 @@ class _MotivationCardState extends State<MotivationCard> {
 
     return Card(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      color: cs.primaryContainer,
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(
           children: [
             Icon(
-              _personaIcon(motivation.persona),
-              color: cs.onPrimaryContainer,
-              size: 22,
+              Icons.format_quote_rounded,
+              color: cs.onSurfaceVariant,
+              size: 20,
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 motivation.message,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: cs.onPrimaryContainer,
+                      color: cs.onSurfaceVariant,
                     ),
               ),
             ),
             IconButton(
-              icon: Icon(Icons.refresh, size: 18, color: cs.onPrimaryContainer),
+              icon: Icon(Icons.refresh, size: 18, color: cs.onSurfaceVariant),
               tooltip: 'New message',
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
@@ -63,16 +62,5 @@ class _MotivationCardState extends State<MotivationCard> {
         ),
       ),
     );
-  }
-
-  IconData _personaIcon(String persona) {
-    switch (persona) {
-      case 'socialiser':
-        return Icons.groups;
-      case 'achiever':
-        return Icons.emoji_events;
-      default:
-        return Icons.auto_awesome;
-    }
   }
 }

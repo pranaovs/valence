@@ -14,19 +14,6 @@ class HabitCard extends StatelessWidget {
     this.onComplete,
   });
 
-  Color _intensityColor(ColorScheme cs) {
-    switch (habit.intensity) {
-      case 'light':
-        return Colors.green;
-      case 'moderate':
-        return Colors.orange;
-      case 'intense':
-        return Colors.redAccent;
-      default:
-        return cs.primary;
-    }
-  }
-
   String _goalStageLabel() {
     switch (habit.goalStage) {
       case 'ignition':
@@ -45,11 +32,9 @@ class HabitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final intensityCol = _intensityColor(cs);
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
@@ -63,45 +48,37 @@ class HabitCard extends StatelessWidget {
                   children: [
                     Text(
                       habit.name,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Wrap(
                       spacing: 6,
                       runSpacing: 4,
                       children: [
-                        // Streak badge
                         if (habit.currentStreak > 0)
                           _badge(
                             context,
                             icon: Icons.local_fire_department,
                             label: '${habit.currentStreak}d',
-                            color: Colors.deepOrange,
                           ),
-                        // Goal stage badge
+                        _badge(context, label: _goalStageLabel()),
                         _badge(
                           context,
-                          label: _goalStageLabel(),
-                          bgColor: cs.secondaryContainer,
-                          textColor: cs.onSecondaryContainer,
+                          label: habit.intensity.isNotEmpty
+                              ? habit.intensity[0].toUpperCase() +
+                                  habit.intensity.substring(1)
+                              : '',
                         ),
-                        // Intensity badge
-                        _badge(
-                          context,
-                          label: habit.intensity[0].toUpperCase() +
-                              habit.intensity.substring(1),
-                          color: intensityCol,
-                        ),
-                        // Plugin verification badge
                         if (habit.trackingMethod == 'plugin' &&
                             habit.pluginId != null)
                           _badge(
                             context,
-                            icon: Icons.verified,
+                            icon: Icons.verified_outlined,
                             label: _pluginLabel(habit.pluginId!),
-                            color: cs.tertiary,
                           ),
                       ],
                     ),
@@ -109,32 +86,21 @@ class HabitCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              // Deep-link redirect button
               if (habit.redirectUrl != null &&
                   habit.redirectUrl!.isNotEmpty &&
                   !habit.todayCompleted)
                 IconButton(
                   onPressed: () => _launchRedirect(habit.redirectUrl!),
-                  icon: const Icon(Icons.open_in_new, size: 20),
+                  icon: Icon(Icons.open_in_new,
+                      size: 20, color: cs.onSurfaceVariant),
                   tooltip: 'Open in app',
                   padding: EdgeInsets.zero,
                   constraints:
                       const BoxConstraints(minWidth: 36, minHeight: 36),
                 ),
-              IconButton.filled(
+              _CompletionButton(
+                completed: habit.todayCompleted,
                 onPressed: habit.todayCompleted ? null : onComplete,
-                style: IconButton.styleFrom(
-                  backgroundColor: habit.todayCompleted
-                      ? Colors.green
-                      : cs.surfaceContainerHighest,
-                  foregroundColor:
-                      habit.todayCompleted ? Colors.white : cs.onSurface,
-                ),
-                icon: Icon(
-                  habit.todayCompleted
-                      ? Icons.check_circle
-                      : Icons.check_circle_outline,
-                ),
               ),
             ],
           ),
@@ -143,34 +109,27 @@ class HabitCard extends StatelessWidget {
     );
   }
 
-  Widget _badge(
-    BuildContext context, {
-    IconData? icon,
-    required String label,
-    Color? color,
-    Color? bgColor,
-    Color? textColor,
-  }) {
-    final effectiveColor = textColor ?? color;
+  Widget _badge(BuildContext context, {IconData? icon, required String label}) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: bgColor ?? color?.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
+        color: cs.onSurface.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 12, color: effectiveColor),
+            Icon(icon, size: 12, color: cs.onSurfaceVariant),
             const SizedBox(width: 3),
           ],
           Text(
             label,
-            style: Theme.of(context)
-                .textTheme
-                .labelSmall
-                ?.copyWith(color: effectiveColor),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: cs.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
           ),
         ],
       ),
@@ -197,5 +156,30 @@ class HabitCard extends StatelessWidget {
     if (uri != null) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
+  }
+}
+
+class _CompletionButton extends StatelessWidget {
+  final bool completed;
+  final VoidCallback? onPressed;
+
+  const _CompletionButton({required this.completed, this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return IconButton(
+      onPressed: onPressed,
+      style: IconButton.styleFrom(
+        backgroundColor: completed
+            ? cs.primary.withValues(alpha: 0.12)
+            : cs.onSurface.withValues(alpha: 0.06),
+      ),
+      icon: Icon(
+        completed ? Icons.check_rounded : Icons.circle_outlined,
+        color: completed ? cs.primary : cs.onSurfaceVariant,
+        size: 22,
+      ),
+    );
   }
 }

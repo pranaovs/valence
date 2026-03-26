@@ -88,7 +88,7 @@ class StreakScoreChart extends StatelessWidget {
                   getDotPainter: (spot, percent, bar, index) =>
                       FlDotCirclePainter(
                     radius: 3,
-                    color: spot.y == 1.0 ? cs.primary : cs.error,
+                    color: spot.y == 1.0 ? cs.primary : cs.onSurface.withValues(alpha: 0.25),
                     strokeWidth: 0,
                   ),
                 ),
@@ -104,8 +104,8 @@ class StreakScoreChart extends StatelessWidget {
                     .map((s) => LineTooltipItem(
                           s.y == 1.0 ? 'Done' : 'Missed',
                           TextStyle(
-                              color: s.y == 1.0 ? cs.primary : cs.error,
-                              fontWeight: FontWeight.bold),
+                              color: s.y == 1.0 ? cs.primary : cs.onSurfaceVariant,
+                              fontWeight: FontWeight.w600),
                         ))
                     .toList(),
               ),

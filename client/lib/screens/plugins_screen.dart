@@ -88,8 +88,8 @@ class _PluginsScreenState extends State<PluginsScreen> {
             child: Text(
               PluginRegistry.categoryLabels[category] ?? category,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
                   ),
             ),
           ),
@@ -100,8 +100,8 @@ class _PluginsScreenState extends State<PluginsScreen> {
 
             return ListTile(
               leading: CircleAvatar(
-                backgroundColor: meta.color.withValues(alpha: 0.15),
-                child: Icon(meta.icon, color: meta.color, size: 20),
+                backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
+                child: Icon(meta.icon, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 20),
               ),
               title: Text(meta.displayName),
               subtitle: Text(meta.description),
@@ -127,30 +127,32 @@ class _PluginsScreenState extends State<PluginsScreen> {
   }
 
   Widget _buildStatusChip(bool connected, String status) {
+    final cs = Theme.of(context).colorScheme;
     if (!connected) {
-      return const Chip(
-        label: Text('Connect'),
+      return Chip(
+        label: Text('Connect',
+            style: TextStyle(color: cs.onSurfaceVariant)),
         padding: EdgeInsets.zero,
         visualDensity: VisualDensity.compact,
+        side: BorderSide(color: cs.outline.withValues(alpha: 0.3)),
       );
     }
 
-    final color = switch (status) {
-      'active' => Colors.green,
-      'error' => Colors.red,
-      'syncing' => Colors.orange,
-      _ => Colors.grey,
-    };
-
     return Chip(
       avatar: Icon(
-        connected ? Icons.check_circle : Icons.circle_outlined,
+        Icons.check_rounded,
         size: 16,
-        color: color,
+        color: cs.primary,
       ),
-      label: Text(status.isNotEmpty ? status[0].toUpperCase() + status.substring(1) : 'Unknown'),
+      label: Text(
+        status.isNotEmpty
+            ? status[0].toUpperCase() + status.substring(1)
+            : 'Unknown',
+        style: TextStyle(color: cs.onSurfaceVariant),
+      ),
       padding: EdgeInsets.zero,
       visualDensity: VisualDensity.compact,
+      side: BorderSide(color: cs.outline.withValues(alpha: 0.3)),
     );
   }
 }
