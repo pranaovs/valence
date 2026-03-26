@@ -177,6 +177,23 @@ class HabitProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> deleteHabit(String habitId) async {
+    try {
+      final token = await _getToken();
+      await _apiService.deleteHabit(token: token, habitId: habitId);
+      await loadHabits();
+      return true;
+    } on ApiException catch (e) {
+      _errorMessage = e.message;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _errorMessage = 'Failed to delete habit.';
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<List<HabitLog>> getHabitLogs(
     String habitId, {
     String range = 'month',

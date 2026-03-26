@@ -124,6 +124,39 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
     }
   }
 
+  Future<void> _delete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: Icon(Icons.delete_forever,
+            color: Theme.of(ctx).colorScheme.error),
+        title: const Text('Delete habit?'),
+        content: const Text(
+            'This will permanently delete this habit and all its history, '
+            'streaks, and logs. This action cannot be undone.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancel')),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final provider = context.read<HabitProvider>();
+    final success = await provider.deleteHabit(_habit.id);
+    if (success && mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,13 +174,21 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                         _edit();
                       case 'archive':
                         _archive();
+                      case 'delete':
+                        _delete();
                     }
                   },
-                  itemBuilder: (_) => [
+                  itemBuilder: (ctx) => [
                     const PopupMenuItem(
                         value: 'edit', child: Text('Edit')),
                     const PopupMenuItem(
                         value: 'archive', child: Text('Archive')),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Text('Delete',
+                          style: TextStyle(
+                              color: Theme.of(ctx).colorScheme.error)),
+                    ),
                   ],
                 ),
               ],

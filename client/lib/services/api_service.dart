@@ -153,6 +153,24 @@ class ApiService {
     }
   }
 
+  Future<void> deleteHabit({
+    required String token,
+    required String habitId,
+  }) async {
+    final response = await _client.delete(
+      Uri.parse('$baseUrl${ApiConfig.habitsPath}/$habitId?permanent=true'),
+      headers: _authHeaders(token),
+    );
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final error = body['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN',
+        message: error?['message'] as String? ?? 'Failed to delete habit.',
+      );
+    }
+  }
+
   Future<HabitCompletionResult> completeHabit({
     required String token,
     required String habitId,
