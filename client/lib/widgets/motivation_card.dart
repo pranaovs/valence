@@ -46,9 +46,9 @@ class _MotivationCardState extends State<MotivationCard> {
             Expanded(
               child: Text(
                 motivation.message,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: cs.onSurfaceVariant,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
               ),
             ),
             IconButton(

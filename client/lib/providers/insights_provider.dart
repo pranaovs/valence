@@ -18,8 +18,8 @@ class InsightsProvider extends ChangeNotifier {
   int? _rawErrorStatusCode;
 
   InsightsProvider({AuthService? authService, ApiService? apiService})
-      : _authService = authService ?? AuthService(),
-        _apiService = apiService ?? ApiService();
+    : _authService = authService ?? AuthService(),
+      _apiService = apiService ?? ApiService();
 
   Future<String> _getToken() async {
     return _authService.getIdToken();
@@ -79,8 +79,7 @@ class InsightsProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> submitReflections(
-      List<Map<String, dynamic>> reflections) async {
+  Future<bool> submitReflections(List<Map<String, dynamic>> reflections) async {
     try {
       final token = await _getToken();
       await _apiService.submitReflections(

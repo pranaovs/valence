@@ -16,10 +16,7 @@ class LoadingOverlay extends StatelessWidget {
       children: [
         child,
         if (isLoading) ...[
-          const ModalBarrier(
-            dismissible: false,
-            color: Colors.black26,
-          ),
+          const ModalBarrier(dismissible: false, color: Colors.black26),
           const Center(child: CircularProgressIndicator()),
         ],
       ],

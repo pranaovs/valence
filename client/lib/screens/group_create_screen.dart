@@ -25,8 +25,8 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
     setState(() => _saving = true);
 
     final success = await context.read<GroupProvider>().createGroup(
-          name: _nameController.text.trim(),
-        );
+      name: _nameController.text.trim(),
+    );
 
     if (!mounted) return;
     setState(() => _saving = false);

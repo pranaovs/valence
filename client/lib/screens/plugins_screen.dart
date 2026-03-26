@@ -26,9 +26,7 @@ class _PluginsScreenState extends State<PluginsScreen> {
     final provider = context.watch<PluginProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plugins'),
-      ),
+      appBar: AppBar(title: const Text('Plugins')),
       body: RefreshIndicator(
         onRefresh: () => provider.loadPlugins(),
         child: _buildBody(provider),
@@ -48,8 +46,11 @@ class _PluginsScreenState extends State<PluginsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline,
-                  size: 48, color: Theme.of(context).colorScheme.error),
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: Theme.of(context).colorScheme.error,
+              ),
               const SizedBox(height: 16),
               Text(provider.errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
@@ -78,8 +79,8 @@ class _PluginsScreenState extends State<PluginsScreen> {
           child: Text(
             'Connect external services to automatically track your habits.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         for (final category in categories) ...[
@@ -88,9 +89,9 @@ class _PluginsScreenState extends State<PluginsScreen> {
             child: Text(
               PluginRegistry.categoryLabels[category] ?? category,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           ...PluginRegistry.byCategory(category).map((meta) {
@@ -100,8 +101,14 @@ class _PluginsScreenState extends State<PluginsScreen> {
 
             return ListTile(
               leading: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
-                child: Icon(meta.icon, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 20),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.06),
+                child: Icon(
+                  meta.icon,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
               ),
               title: Text(meta.displayName),
               subtitle: Text(meta.description),
@@ -130,8 +137,7 @@ class _PluginsScreenState extends State<PluginsScreen> {
     final cs = Theme.of(context).colorScheme;
     if (!connected) {
       return Chip(
-        label: Text('Connect',
-            style: TextStyle(color: cs.onSurfaceVariant)),
+        label: Text('Connect', style: TextStyle(color: cs.onSurfaceVariant)),
         padding: EdgeInsets.zero,
         visualDensity: VisualDensity.compact,
         side: BorderSide(color: cs.outline.withValues(alpha: 0.3)),
@@ -139,11 +145,7 @@ class _PluginsScreenState extends State<PluginsScreen> {
     }
 
     return Chip(
-      avatar: Icon(
-        Icons.check_rounded,
-        size: 16,
-        color: cs.primary,
-      ),
+      avatar: Icon(Icons.check_rounded, size: 16, color: cs.primary),
       label: Text(
         status.isNotEmpty
             ? status[0].toUpperCase() + status.substring(1)

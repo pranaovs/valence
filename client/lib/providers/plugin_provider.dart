@@ -20,9 +20,9 @@ class PluginProvider extends ChangeNotifier {
     AuthService? authService,
     ApiService? apiService,
     ScreenTimeService? screenTimeService,
-  })  : _authService = authService ?? AuthService(),
-        _apiService = apiService ?? ApiService(),
-        _screenTimeService = screenTimeService ?? ScreenTimeService();
+  }) : _authService = authService ?? AuthService(),
+       _apiService = apiService ?? ApiService(),
+       _screenTimeService = screenTimeService ?? ScreenTimeService();
 
   Future<String> _getToken() async {
     return _authService.getIdToken();

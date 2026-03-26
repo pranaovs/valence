@@ -13,7 +13,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isSignUp = false;
 
   AuthProvider({AuthService? authService})
-      : _authService = authService ?? AuthService();
+    : _authService = authService ?? AuthService();
 
   ValenceUser? get user => _user;
   bool get isLoading => _isLoading;
@@ -89,16 +89,16 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> register({required String name, required String timezone}) async {
+  Future<void> register({
+    required String name,
+    required String timezone,
+  }) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      _user = await _authService.registerUser(
-        name: name,
-        timezone: timezone,
-      );
+      _user = await _authService.registerUser(name: name, timezone: timezone);
       _needsRegistration = false;
     } on ApiException catch (e) {
       _errorMessage = e.message;

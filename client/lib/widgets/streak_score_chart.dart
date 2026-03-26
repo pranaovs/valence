@@ -66,10 +66,13 @@ class StreakScoreChart extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        DateFormat('d/M').format(
-                            DateTime.parse(sorted[idx].date)),
+                        DateFormat(
+                          'd/M',
+                        ).format(DateTime.parse(sorted[idx].date)),
                         style: TextStyle(
-                            fontSize: 10, color: cs.onSurfaceVariant),
+                          fontSize: 10,
+                          color: cs.onSurfaceVariant,
+                        ),
                       ),
                     );
                   },
@@ -87,10 +90,12 @@ class StreakScoreChart extends StatelessWidget {
                   show: true,
                   getDotPainter: (spot, percent, bar, index) =>
                       FlDotCirclePainter(
-                    radius: 3,
-                    color: spot.y == 1.0 ? cs.primary : cs.onSurface.withValues(alpha: 0.25),
-                    strokeWidth: 0,
-                  ),
+                        radius: 3,
+                        color: spot.y == 1.0
+                            ? cs.primary
+                            : cs.onSurface.withValues(alpha: 0.25),
+                        strokeWidth: 0,
+                      ),
                 ),
                 belowBarData: BarAreaData(
                   show: true,
@@ -101,12 +106,15 @@ class StreakScoreChart extends StatelessWidget {
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
                 getTooltipItems: (spots) => spots
-                    .map((s) => LineTooltipItem(
-                          s.y == 1.0 ? 'Done' : 'Missed',
-                          TextStyle(
-                              color: s.y == 1.0 ? cs.primary : cs.onSurfaceVariant,
-                              fontWeight: FontWeight.w600),
-                        ))
+                    .map(
+                      (s) => LineTooltipItem(
+                        s.y == 1.0 ? 'Done' : 'Missed',
+                        TextStyle(
+                          color: s.y == 1.0 ? cs.primary : cs.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
                     .toList(),
               ),
             ),

@@ -9,7 +9,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final user = auth.user;
-    if (user == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (user == null)
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
     return Scaffold(
       appBar: AppBar(
@@ -30,8 +31,9 @@ class HomeScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 40,
-                backgroundImage:
-                    user.avatar != null ? NetworkImage(user.avatar!) : null,
+                backgroundImage: user.avatar != null
+                    ? NetworkImage(user.avatar!)
+                    : null,
                 child: user.avatar == null
                     ? Text(
                         user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
@@ -84,9 +86,9 @@ class _StatChip extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
+          color: cs.onSurfaceVariant,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

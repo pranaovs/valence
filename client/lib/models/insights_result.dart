@@ -11,7 +11,9 @@ class InsightsResult {
 
   factory InsightsResult.fromJson(Map<String, dynamic> json) {
     final rawPatterns = json['patterns'];
-    final patterns = rawPatterns is Map<String, dynamic> ? rawPatterns : <String, dynamic>{};
+    final patterns = rawPatterns is Map<String, dynamic>
+        ? rawPatterns
+        : <String, dynamic>{};
     final byReasonRaw = patterns['by_reason'] ?? patterns['byReason'] ?? {};
     final byDayRaw = patterns['by_day'] ?? patterns['byDay'] ?? {};
 
@@ -25,10 +27,14 @@ class InsightsResult {
   static Map<String, int> _toIntMap(dynamic raw) {
     if (raw is! Map) return {};
     return Map<String, int>.fromEntries(
-      raw.entries.map((e) => MapEntry(
-            e.key.toString(),
-            e.value is num ? (e.value as num).toInt() : int.tryParse(e.value.toString()) ?? 0,
-          )),
+      raw.entries.map(
+        (e) => MapEntry(
+          e.key.toString(),
+          e.value is num
+              ? (e.value as num).toInt()
+              : int.tryParse(e.value.toString()) ?? 0,
+        ),
+      ),
     );
   }
 }

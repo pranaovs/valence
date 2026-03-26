@@ -13,8 +13,8 @@ class NotificationProvider extends ChangeNotifier {
   String? _errorMessage;
 
   NotificationProvider({AuthService? authService, ApiService? apiService})
-      : _authService = authService ?? AuthService(),
-        _apiService = apiService ?? ApiService();
+    : _authService = authService ?? AuthService(),
+      _apiService = apiService ?? ApiService();
 
   Future<String> _getToken() async {
     return _authService.getIdToken();

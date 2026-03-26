@@ -13,9 +13,9 @@ class AuthService {
     FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
     ApiService? apiService,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn(),
-        _apiService = apiService ?? ApiService();
+  }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+       _googleSignIn = googleSignIn ?? GoogleSignIn(),
+       _apiService = apiService ?? ApiService();
 
   User? get currentFirebaseUser => _firebaseAuth.currentUser;
 
@@ -62,10 +62,7 @@ class AuthService {
     );
   }
 
-  Future<ValenceUser> registerUser({
-    String? name,
-    String? timezone,
-  }) async {
+  Future<ValenceUser> registerUser({String? name, String? timezone}) async {
     final token = await getIdToken();
     return _apiService.register(
       firebaseToken: token,

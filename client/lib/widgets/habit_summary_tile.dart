@@ -60,33 +60,39 @@ class HabitSummaryTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(habit.name,
-                      style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    habit.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       _StatItem(
-                          icon: Icons.local_fire_department,
-                          label: '${habit.currentStreak}',
-                          tooltip: 'Current streak'),
+                        icon: Icons.local_fire_department,
+                        label: '${habit.currentStreak}',
+                        tooltip: 'Current streak',
+                      ),
                       const SizedBox(width: 16),
                       _StatItem(
-                          icon: Icons.emoji_events,
-                          label: '${habit.longestStreak}',
-                          tooltip: 'Longest streak'),
+                        icon: Icons.emoji_events,
+                        label: '${habit.longestStreak}',
+                        tooltip: 'Longest streak',
+                      ),
                       const SizedBox(width: 16),
                       _StatItem(
-                          icon: Icons.check_circle_outline,
-                          label: '${habit.totalCompleted}',
-                          tooltip: 'Total completed'),
+                        icon: Icons.check_circle_outline,
+                        label: '${habit.totalCompleted}',
+                        tooltip: 'Total completed',
+                      ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Stage: ${habit.goalStage[0].toUpperCase()}${habit.goalStage.substring(1)} '
                     '(${habit.currentStreak}/${_stageTarget(habit.goalStage)})',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: cs.onSurfaceVariant),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -116,7 +122,11 @@ class _StatItem extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          Icon(
+            icon,
+            size: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(width: 4),
           Text(label, style: Theme.of(context).textTheme.bodyMedium),
         ],

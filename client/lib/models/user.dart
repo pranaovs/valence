@@ -43,17 +43,20 @@ class ValenceUser {
       rank: (json['rank'] as String?) ?? 'bronze',
       personaType:
           (json['personaType'] ?? json['persona_type'] ?? 'general') as String,
-      equipped: Map<String, dynamic>.from(
-          (json['equipped'] as Map?) ?? {}),
+      equipped: Map<String, dynamic>.from((json['equipped'] as Map?) ?? {}),
       notificationPreferences: Map<String, dynamic>.from(
-          (json['notificationPreferences'] ??
-              json['notification_preferences'] ??
-              {}) as Map),
+        (json['notificationPreferences'] ??
+                json['notification_preferences'] ??
+                {})
+            as Map,
+      ),
       timezone: (json['timezone'] as String?) ?? 'UTC',
       createdAt: DateTime.parse(
-          (json['createdAt'] ?? json['created_at']) as String),
+        (json['createdAt'] ?? json['created_at']) as String,
+      ),
       updatedAt: DateTime.parse(
-          (json['updatedAt'] ?? json['updated_at']) as String),
+        (json['updatedAt'] ?? json['updated_at']) as String,
+      ),
     );
   }
 

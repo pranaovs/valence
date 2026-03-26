@@ -67,14 +67,15 @@ class _SocialScreenState extends State<SocialScreen> {
 
               Navigator.of(ctx).pop();
               final success = await context.read<GroupProvider>().joinGroup(
-                    groupId: groupId,
-                    inviteCode: code,
-                  );
+                groupId: groupId,
+                inviteCode: code,
+              );
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                        success ? 'Joined group!' : 'Failed to join group.'),
+                      success ? 'Joined group!' : 'Failed to join group.',
+                    ),
                   ),
                 );
               }
@@ -167,11 +168,13 @@ class _SocialScreenState extends State<SocialScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline,
-                  size: 48, color: Theme.of(context).colorScheme.error),
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: Theme.of(context).colorScheme.error,
+              ),
               const SizedBox(height: 16),
-              Text(groupProvider.errorMessage!,
-                  textAlign: TextAlign.center),
+              Text(groupProvider.errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => groupProvider.loadGroups(),

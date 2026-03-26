@@ -17,8 +17,8 @@ class HabitProvider extends ChangeNotifier {
   String? _errorMessage;
 
   HabitProvider({AuthService? authService, ApiService? apiService})
-      : _authService = authService ?? AuthService(),
-        _apiService = apiService ?? ApiService();
+    : _authService = authService ?? AuthService(),
+      _apiService = apiService ?? ApiService();
 
   Future<String> _getToken() async {
     return _authService.getIdToken();
@@ -54,8 +54,10 @@ class HabitProvider extends ChangeNotifier {
   Future<HabitCompletionResult?> completeHabit(String habitId) async {
     try {
       final token = await _getToken();
-      final result =
-          await _apiService.completeHabit(token: token, habitId: habitId);
+      final result = await _apiService.completeHabit(
+        token: token,
+        habitId: habitId,
+      );
       await loadHabits();
       return result;
     } on ApiException catch (e) {

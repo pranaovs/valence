@@ -56,15 +56,13 @@ class _NudgePromptSheetState extends State<NudgePromptSheet> {
 
     if (result != null) {
       setState(() => _nudgedUserIds.add(member.userId));
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Nudged ${member.name}!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Nudged ${member.name}!')));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            groupProvider.errorMessage ?? 'Failed to send nudge.',
-          ),
+          content: Text(groupProvider.errorMessage ?? 'Failed to send nudge.'),
         ),
       );
     }
@@ -101,17 +99,16 @@ class _NudgePromptSheetState extends State<NudgePromptSheet> {
                 const SizedBox(height: 8),
                 Text(
                   'Perfect day!',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'You finished all your habits. Nudge a friend who hasn\'t?',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: cs.onSurfaceVariant,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                   textAlign: TextAlign.center,
                 ),
                 const Divider(height: 24),
@@ -123,33 +120,35 @@ class _NudgePromptSheetState extends State<NudgePromptSheet> {
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
                 : _groups.isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.check_circle_outline,
-                                size: 48, color: Theme.of(context).colorScheme.primary),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Everyone in your groups is done too!',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                ? Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.check_circle_outline,
+                          size: 48,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                      )
-                    : ListView.builder(
-                        controller: scrollController,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: _groups.length,
-                        itemBuilder: (context, index) {
-                          final group = _groups[index];
-                          final members =
-                              _incompleteByGroup[group.id] ?? [];
-                          return _buildGroupSection(group, members);
-                        },
-                      ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Everyone in your groups is done too!',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    controller: scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _groups.length,
+                    itemBuilder: (context, index) {
+                      final group = _groups[index];
+                      final members = _incompleteByGroup[group.id] ?? [];
+                      return _buildGroupSection(group, members);
+                    },
+                  ),
           ),
           // Dismiss button
           Padding(
@@ -175,10 +174,9 @@ class _NudgePromptSheetState extends State<NudgePromptSheet> {
           padding: const EdgeInsets.only(top: 8, bottom: 4),
           child: Text(
             group.name,
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         ...members.map((member) {
@@ -187,8 +185,9 @@ class _NudgePromptSheetState extends State<NudgePromptSheet> {
             contentPadding: EdgeInsets.zero,
             leading: CircleAvatar(
               radius: 18,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerHighest,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerHighest,
               child: Text(
                 member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
                 style: const TextStyle(fontWeight: FontWeight.bold),

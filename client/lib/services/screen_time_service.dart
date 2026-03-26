@@ -4,10 +4,7 @@ class ScreenTimeData {
   final int screenMinutes;
   final Map<String, int> appUsage;
 
-  const ScreenTimeData({
-    required this.screenMinutes,
-    required this.appUsage,
-  });
+  const ScreenTimeData({required this.screenMinutes, required this.appUsage});
 }
 
 class ScreenTimeService {
@@ -47,10 +44,7 @@ class ScreenTimeService {
         (key, value) => MapEntry(key.toString(), (value as num).toInt()),
       );
 
-      return ScreenTimeData(
-        screenMinutes: screenMinutes,
-        appUsage: appUsage,
-      );
+      return ScreenTimeData(screenMinutes: screenMinutes, appUsage: appUsage);
     } on PlatformException {
       return null;
     } on MissingPluginException {

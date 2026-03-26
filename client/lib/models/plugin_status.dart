@@ -19,7 +19,8 @@ class PluginStatus {
       connected: (json['connected'] as bool?) ?? false,
       status: (json['status'] as String?) ?? 'disconnected',
       lastSyncedAt: _parseDateTime(
-          json['lastSyncedAt'] ?? json['last_synced_at']),
+        json['lastSyncedAt'] ?? json['last_synced_at'],
+      ),
       error: json['error'] as String?,
     );
   }

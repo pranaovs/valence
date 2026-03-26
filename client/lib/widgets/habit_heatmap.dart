@@ -54,20 +54,26 @@ class HabitHeatmapWidget extends StatelessWidget {
       );
     }
 
-    final sorted = logs
-        .map((l) => DateTime.tryParse(l.date))
-        .whereType<DateTime>()
-        .toList()
-      ..sort();
+    final sorted =
+        logs
+            .map((l) => DateTime.tryParse(l.date))
+            .whereType<DateTime>()
+            .toList()
+          ..sort();
     final startDate = DateTime(
-        sorted.first.year, sorted.first.month, sorted.first.day);
+      sorted.first.year,
+      sorted.first.month,
+      sorted.first.day,
+    );
     final today = DateTime.now();
     final endDate = DateTime(today.year, today.month, today.day);
 
     // Fill all dates in range so blank squares appear for days with no data
-    for (var d = startDate;
-        !d.isAfter(endDate);
-        d = d.add(const Duration(days: 1))) {
+    for (
+      var d = startDate;
+      !d.isAfter(endDate);
+      d = d.add(const Duration(days: 1))
+    ) {
       final normalized = DateTime(d.year, d.month, d.day);
       selectedMap.putIfAbsent(normalized, () => 0);
     }

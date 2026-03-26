@@ -39,81 +39,83 @@ class ValenceApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PluginProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: Builder(builder: (context) {
-        final themeMode = context.watch<ThemeProvider>().themeMode;
-        return MaterialApp(
-        title: 'Valence',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF546E7A),
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-          cardTheme: CardThemeData(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Colors.grey.shade200),
+      child: Builder(
+        builder: (context) {
+          final themeMode = context.watch<ThemeProvider>().themeMode;
+          return MaterialApp(
+            title: 'Valence',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF546E7A),
+                brightness: Brightness.light,
+              ),
+              useMaterial3: true,
+              cardTheme: CardThemeData(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: Colors.grey.shade200),
+                ),
+              ),
+              appBarTheme: const AppBarTheme(
+                centerTitle: false,
+                scrolledUnderElevation: 1,
+              ),
+              dividerTheme: DividerThemeData(
+                color: Colors.grey.shade200,
+                thickness: 1,
+              ),
+              navigationBarTheme: NavigationBarThemeData(
+                elevation: 0,
+                indicatorColor: const Color(0xFF546E7A).withValues(alpha: 0.12),
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              ),
+              floatingActionButtonTheme: FloatingActionButtonThemeData(
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
             ),
-          ),
-          appBarTheme: const AppBarTheme(
-            centerTitle: false,
-            scrolledUnderElevation: 1,
-          ),
-          dividerTheme: DividerThemeData(
-            color: Colors.grey.shade200,
-            thickness: 1,
-          ),
-          navigationBarTheme: NavigationBarThemeData(
-            elevation: 0,
-            indicatorColor: const Color(0xFF546E7A).withValues(alpha: 0.12),
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          ),
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
-            elevation: 1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF546E7A),
+                brightness: Brightness.dark,
+              ),
+              useMaterial3: true,
+              cardTheme: CardThemeData(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: Colors.grey.shade800),
+                ),
+              ),
+              appBarTheme: const AppBarTheme(
+                centerTitle: false,
+                scrolledUnderElevation: 1,
+              ),
+              dividerTheme: DividerThemeData(
+                color: Colors.grey.shade800,
+                thickness: 1,
+              ),
+              navigationBarTheme: NavigationBarThemeData(
+                elevation: 0,
+                indicatorColor: const Color(0xFF546E7A).withValues(alpha: 0.24),
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              ),
+              floatingActionButtonTheme: FloatingActionButtonThemeData(
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
             ),
-          ),
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF546E7A),
-            brightness: Brightness.dark,
-          ),
-          useMaterial3: true,
-          cardTheme: CardThemeData(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Colors.grey.shade800),
-            ),
-          ),
-          appBarTheme: const AppBarTheme(
-            centerTitle: false,
-            scrolledUnderElevation: 1,
-          ),
-          dividerTheme: DividerThemeData(
-            color: Colors.grey.shade800,
-            thickness: 1,
-          ),
-          navigationBarTheme: NavigationBarThemeData(
-            elevation: 0,
-            indicatorColor: const Color(0xFF546E7A).withValues(alpha: 0.24),
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          ),
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
-            elevation: 1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        themeMode: themeMode,
-        home: const AuthGate(),
-      );
-      }),
+            themeMode: themeMode,
+            home: const AuthGate(),
+          );
+        },
+      ),
     );
   }
 }
@@ -159,7 +161,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _autoReportScreenTime());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _autoReportScreenTime(),
+    );
   }
 
   @override
@@ -218,8 +222,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                 children: [
                   CircleAvatar(
                     radius: 24,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.08),
                     child: Text(
                       user?.name.isNotEmpty == true
                           ? user!.name[0].toUpperCase()
@@ -235,15 +240,15 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                   Text(
                     user?.name ?? 'Valence',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   if (user != null)
                     Text(
                       '${user.xp} XP  ·  ${user.sparks} Sparks',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                 ],
               ),
@@ -255,9 +260,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
               onTap: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const PluginsScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const PluginsScreen()),
                 );
               },
             ),
@@ -267,11 +270,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
               subtitle: const Text('Themes, flames, and more'),
               onTap: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const ShopScreen(),
-                  ),
-                );
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const ShopScreen()));
               },
             ),
             ListTile(
@@ -281,9 +282,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
               onTap: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const SettingsScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
                 );
               },
             ),
@@ -301,21 +300,18 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       ),
       body: IndexedStack(
         index: _currentIndex,
-        children: const [
-          HabitsScreen(),
-          SocialScreen(),
-          InsightsScreen(),
-        ],
+        children: const [HabitsScreen(), SocialScreen(), InsightsScreen()],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (i) => setState(() => _currentIndex = i),
         destinations: const [
           NavigationDestination(
-              icon: Icon(Icons.track_changes), label: 'Habits'),
+            icon: Icon(Icons.track_changes),
+            label: 'Habits',
+          ),
           NavigationDestination(icon: Icon(Icons.groups), label: 'Social'),
-          NavigationDestination(
-              icon: Icon(Icons.insights), label: 'Insights'),
+          NavigationDestination(icon: Icon(Icons.insights), label: 'Insights'),
         ],
       ),
     );

@@ -12,10 +12,13 @@ class FreezeResult {
   factory FreezeResult.fromJson(Map<String, dynamic> json) {
     return FreezeResult(
       message: (json['message'] as String?) ?? 'Freeze activated.',
-      sparksSpent:
-          _toInt(json['sparksSpent'] ?? json['sparks_spent'], fallback: 100),
-      sparksRemaining:
-          _toInt(json['sparksRemaining'] ?? json['sparks_remaining']),
+      sparksSpent: _toInt(
+        json['sparksSpent'] ?? json['sparks_spent'],
+        fallback: 100,
+      ),
+      sparksRemaining: _toInt(
+        json['sparksRemaining'] ?? json['sparks_remaining'],
+      ),
     );
   }
 

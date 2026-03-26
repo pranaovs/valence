@@ -34,21 +34,20 @@ class WeeklyScore {
       groupId: (json['groupId'] ?? json['group_id']) as String,
       weekStartDate:
           (json['weekStartDate'] ?? json['week_start_date']) as String,
-      contributionScore:
-          _toInt(json['contributionScore'] ?? json['contribution_score']),
-      habitsCompleted:
-          _toInt(json['habitsCompleted'] ?? json['habits_completed']),
-      goldLinkContributions: _toInt(json['goldLinkContributions'] ??
-          json['gold_link_contributions']),
-      kudosReceived:
-          _toInt(json['kudosReceived'] ?? json['kudos_received']),
-      rankInGroup:
-          _toIntNullable(json['rankInGroup'] ?? json['rank_in_group']),
+      contributionScore: _toInt(
+        json['contributionScore'] ?? json['contribution_score'],
+      ),
+      habitsCompleted: _toInt(
+        json['habitsCompleted'] ?? json['habits_completed'],
+      ),
+      goldLinkContributions: _toInt(
+        json['goldLinkContributions'] ?? json['gold_link_contributions'],
+      ),
+      kudosReceived: _toInt(json['kudosReceived'] ?? json['kudos_received']),
+      rankInGroup: _toIntNullable(json['rankInGroup'] ?? json['rank_in_group']),
       userName: (json['userName'] ?? json['user_name'] ?? '') as String,
-      userAvatar:
-          (json['userAvatar'] ?? json['user_avatar']) as String?,
-      userRank:
-          (json['userRank'] ?? json['user_rank'] ?? 'bronze') as String,
+      userAvatar: (json['userAvatar'] ?? json['user_avatar']) as String?,
+      userRank: (json['userRank'] ?? json['user_rank'] ?? 'bronze') as String,
     );
   }
 

@@ -23,13 +23,18 @@ class HabitCompletionResult {
     final points = json['points'] as Map<String, dynamic>? ?? {};
     // Support both camelCase and snake_case response formats
     final pointsEarned = json['pointsEarned'] ?? json['points_earned'];
-    final pe = pointsEarned is Map<String, dynamic> ? pointsEarned : <String, dynamic>{};
+    final pe = pointsEarned is Map<String, dynamic>
+        ? pointsEarned
+        : <String, dynamic>{};
 
     return HabitCompletionResult(
       habit: Habit.fromJson(json['habit'] as Map<String, dynamic>),
       xpEarned: _toInt(points['xpEarned'] ?? pe['xp'] ?? pe['xpEarned']),
-      sparksEarned: _toInt(points['sparksEarned'] ?? pe['sparks'] ?? pe['sparksEarned']),
-      newRank: (points['newRank'] ?? json['newRank'] ?? json['new_rank']) as String?,
+      sparksEarned: _toInt(
+        points['sparksEarned'] ?? pe['sparks'] ?? pe['sparksEarned'],
+      ),
+      newRank:
+          (points['newRank'] ?? json['newRank'] ?? json['new_rank']) as String?,
       perfectDay: (json['perfectDay'] ?? json['perfect_day'] ?? false) as bool,
       goalStageChanged:
           (json['goalStageChanged'] ?? json['goal_stage_changed'] ?? false)

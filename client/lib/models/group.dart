@@ -33,28 +33,32 @@ class Group {
     return Group(
       id: json['id'] as String,
       name: json['name'] as String,
-      inviteCode:
-          (json['inviteCode'] ?? json['invite_code'] ?? '') as String,
+      inviteCode: (json['inviteCode'] ?? json['invite_code'] ?? '') as String,
       tier: (json['tier'] as String?) ?? 'spark',
-      currentStreak:
-          _toInt(json['currentStreak'] ?? json['current_streak']),
-      longestStreak:
-          _toInt(json['longestStreak'] ?? json['longest_streak']),
+      currentStreak: _toInt(json['currentStreak'] ?? json['current_streak']),
+      longestStreak: _toInt(json['longestStreak'] ?? json['longest_streak']),
       totalLinks: _toInt(json['totalLinks'] ?? json['total_links']),
-      memberCount:
-          _toInt(json['memberCount'] ?? json['member_count'], fallback: 1),
-      createdBy:
-          (json['createdBy'] ?? json['created_by'] ?? '') as String,
+      memberCount: _toInt(
+        json['memberCount'] ?? json['member_count'],
+        fallback: 1,
+      ),
+      createdBy: (json['createdBy'] ?? json['created_by'] ?? '') as String,
       role: json['role'] as String?,
       joinedAt: json['joinedAt'] != null
           ? DateTime.parse(json['joinedAt'] as String)
           : json['joined_at'] != null
-              ? DateTime.parse(json['joined_at'] as String)
-              : null,
+          ? DateTime.parse(json['joined_at'] as String)
+          : null,
       createdAt: DateTime.parse(
-          (json['createdAt'] ?? json['created_at']) as String),
+        (json['createdAt'] ?? json['created_at']) as String,
+      ),
       updatedAt: DateTime.parse(
-          (json['updatedAt'] ?? json['updated_at'] ?? json['createdAt'] ?? json['created_at']) as String),
+        (json['updatedAt'] ??
+                json['updated_at'] ??
+                json['createdAt'] ??
+                json['created_at'])
+            as String,
+      ),
     );
   }
 

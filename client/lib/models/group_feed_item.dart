@@ -23,7 +23,8 @@ class GroupFeedItem {
       type: json['type'] as String,
       data: Map<String, dynamic>.from((json['data'] as Map?) ?? {}),
       createdAt: DateTime.parse(
-          (json['createdAt'] ?? json['created_at']) as String),
+        (json['createdAt'] ?? json['created_at']) as String,
+      ),
     );
   }
 

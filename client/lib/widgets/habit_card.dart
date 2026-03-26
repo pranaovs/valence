@@ -49,8 +49,8 @@ class HabitCard extends StatelessWidget {
                     Text(
                       habit.name,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
+                        fontWeight: FontWeight.w500,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -70,7 +70,7 @@ class HabitCard extends StatelessWidget {
                           context,
                           label: habit.intensity.isNotEmpty
                               ? habit.intensity[0].toUpperCase() +
-                                  habit.intensity.substring(1)
+                                    habit.intensity.substring(1)
                               : '',
                         ),
                         if (habit.trackingMethod == 'plugin' &&
@@ -91,12 +91,17 @@ class HabitCard extends StatelessWidget {
                   !habit.todayCompleted)
                 IconButton(
                   onPressed: () => _launchRedirect(habit.redirectUrl!),
-                  icon: Icon(Icons.open_in_new,
-                      size: 20, color: cs.onSurfaceVariant),
+                  icon: Icon(
+                    Icons.open_in_new,
+                    size: 20,
+                    color: cs.onSurfaceVariant,
+                  ),
                   tooltip: 'Open in app',
                   padding: EdgeInsets.zero,
-                  constraints:
-                      const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints: const BoxConstraints(
+                    minWidth: 36,
+                    minHeight: 36,
+                  ),
                 ),
               _CompletionButton(
                 completed: habit.todayCompleted,
@@ -127,9 +132,9 @@ class HabitCard extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: cs.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: cs.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

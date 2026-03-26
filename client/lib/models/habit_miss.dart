@@ -7,7 +7,8 @@ class HabitMissResult {
     return HabitMissResult(
       supportiveMessage:
           (json['supportiveMessage'] ?? json['supportive_message'])
-              as String? ?? 'Tomorrow is a fresh start.',
+              as String? ??
+          'Tomorrow is a fresh start.',
     );
   }
 }

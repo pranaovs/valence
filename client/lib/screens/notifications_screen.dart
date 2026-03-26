@@ -67,14 +67,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline,
-                  size: 48, color: Theme.of(context).colorScheme.error),
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: Theme.of(context).colorScheme.error,
+              ),
               const SizedBox(height: 16),
               Text(provider.errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: () => provider.loadNotifications(
-                    unreadOnly: _showUnreadOnly),
+                onPressed: () =>
+                    provider.loadNotifications(unreadOnly: _showUnreadOnly),
                 child: const Text('Retry'),
               ),
             ],
@@ -122,10 +125,7 @@ class _NotificationTile extends StatelessWidget {
   final AppNotification notification;
   final VoidCallback onTap;
 
-  const _NotificationTile({
-    required this.notification,
-    required this.onTap,
-  });
+  const _NotificationTile({required this.notification, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +178,9 @@ class _NotificationTile extends StatelessWidget {
           ],
         ],
       ),
-      tileColor: notification.read ? null : cs.primaryContainer.withValues(alpha: 0.1),
+      tileColor: notification.read
+          ? null
+          : cs.primaryContainer.withValues(alpha: 0.1),
       onTap: onTap,
     );
   }

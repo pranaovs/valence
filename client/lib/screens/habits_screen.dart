@@ -31,11 +31,14 @@ class _HabitsScreenState extends State<HabitsScreen> {
   }
 
   void _showCompletionSnackbar(HabitCompletionResult result) {
-    final msg = StringBuffer('+${result.xpEarned} XP, +${result.sparksEarned} Sparks');
+    final msg = StringBuffer(
+      '+${result.xpEarned} XP, +${result.sparksEarned} Sparks',
+    );
     if (result.perfectDay) msg.write(' | Perfect day!');
     if (result.goalStageChanged) msg.write(' | Stage changed!');
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(msg.toString())));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(msg.toString())));
 
     if (result.perfectDay) {
       // Small delay so the snackbar shows first
@@ -62,34 +65,53 @@ class _HabitsScreenState extends State<HabitsScreen> {
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(32),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
+                  ),
                   child: Row(
                     children: [
-                      Text('${user.xp} XP',
-                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              )),
+                      Text(
+                        '${user.xp} XP',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                      ),
                       const SizedBox(width: 12),
                       Container(
-                        width: 3, height: 3,
+                        width: 3,
+                        height: 3,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                           shape: BoxShape.circle,
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Text('${user.sparks} Sparks',
-                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              )),
+                      Text(
+                        '${user.sparks} Sparks',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                      ),
                       const Spacer(),
                       Text(
-                        user.rank.isNotEmpty ? user.rank[0].toUpperCase() + user.rank.substring(1) : '',
+                        user.rank.isNotEmpty
+                            ? user.rank[0].toUpperCase() +
+                                  user.rank.substring(1)
+                            : '',
                         style: Theme.of(context).textTheme.labelMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                       ),
                     ],
@@ -119,18 +141,20 @@ class _HabitsScreenState extends State<HabitsScreen> {
               );
             },
           ),
-          Builder(builder: (context) {
-            final themeProvider = context.watch<ThemeProvider>();
-            return IconButton(
-              icon: Icon(
-                themeProvider.isDark
-                    ? Icons.light_mode_outlined
-                    : Icons.dark_mode_outlined,
-              ),
-              tooltip: themeProvider.isDark ? 'Light mode' : 'Dark mode',
-              onPressed: () => themeProvider.toggle(),
-            );
-          }),
+          Builder(
+            builder: (context) {
+              final themeProvider = context.watch<ThemeProvider>();
+              return IconButton(
+                icon: Icon(
+                  themeProvider.isDark
+                      ? Icons.light_mode_outlined
+                      : Icons.dark_mode_outlined,
+                ),
+                tooltip: themeProvider.isDark ? 'Light mode' : 'Dark mode',
+                onPressed: () => themeProvider.toggle(),
+              );
+            },
+          ),
         ],
       ),
       body: RefreshIndicator(
@@ -167,11 +191,13 @@ class _HabitsScreenState extends State<HabitsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline, size: 48,
-                  color: Theme.of(context).colorScheme.error),
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: Theme.of(context).colorScheme.error,
+              ),
               const SizedBox(height: 16),
-              Text(habitProvider.errorMessage!,
-                  textAlign: TextAlign.center),
+              Text(habitProvider.errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => habitProvider.loadHabits(),
@@ -203,7 +229,8 @@ class _HabitsScreenState extends State<HabitsScreen> {
 
     return ListView.builder(
       padding: const EdgeInsets.only(top: 0, bottom: 80),
-      itemCount: habitProvider.habits.length + 2, // motivation + summary + habits
+      itemCount:
+          habitProvider.habits.length + 2, // motivation + summary + habits
       itemBuilder: (context, index) {
         if (index == 0) return const MotivationCard();
         if (index == 1) {
@@ -252,9 +279,9 @@ class _HabitsScreenState extends State<HabitsScreen> {
           Text(
             '$done/$total',
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: cs.onSurfaceVariant,
-                ),
+              fontWeight: FontWeight.w600,
+              color: cs.onSurfaceVariant,
+            ),
           ),
         ],
       ),

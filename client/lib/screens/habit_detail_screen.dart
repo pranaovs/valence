@@ -59,7 +59,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
     final result = await provider.completeHabit(_habit.id);
     if (result != null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('+${result.xpEarned} XP, +${result.sparksEarned} Sparks')),
+        SnackBar(
+          content: Text(
+            '+${result.xpEarned} XP, +${result.sparksEarned} Sparks',
+          ),
+        ),
       );
       if (result.perfectDay) {
         Future.delayed(const Duration(milliseconds: 500), () {
@@ -84,9 +88,9 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
       reasonText: result['text'],
     );
     if (missResult != null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(missResult.supportiveMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(missResult.supportiveMessage)));
     }
     await _refreshHabit();
   }
@@ -109,15 +113,18 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
       builder: (ctx) => AlertDialog(
         title: const Text('Archive habit?'),
         content: const Text(
-            'This will remove the habit from your active list. '
-            'Your history and streaks are preserved.'),
+          'This will remove the habit from your active list. '
+          'Your history and streaks are preserved.',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Archive')),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Archive'),
+          ),
         ],
       ),
     );
@@ -134,16 +141,20 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        icon: Icon(Icons.delete_forever,
-            color: Theme.of(ctx).colorScheme.error),
+        icon: Icon(
+          Icons.delete_forever,
+          color: Theme.of(ctx).colorScheme.error,
+        ),
         title: const Text('Delete habit?'),
         content: const Text(
-            'This will permanently delete this habit and all its history, '
-            'streaks, and logs. This action cannot be undone.'),
+          'This will permanently delete this habit and all its history, '
+          'streaks, and logs. This action cannot be undone.',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(ctx).colorScheme.error,
@@ -185,15 +196,19 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                     }
                   },
                   itemBuilder: (ctx) => [
+                    const PopupMenuItem(value: 'edit', child: Text('Edit')),
                     const PopupMenuItem(
-                        value: 'edit', child: Text('Edit')),
-                    const PopupMenuItem(
-                        value: 'archive', child: Text('Archive')),
+                      value: 'archive',
+                      child: Text('Archive'),
+                    ),
                     PopupMenuItem(
                       value: 'delete',
-                      child: Text('Delete',
-                          style: TextStyle(
-                              color: Theme.of(ctx).colorScheme.error)),
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(
+                          color: Theme.of(ctx).colorScheme.error,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -212,12 +227,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                       children: [
                         Expanded(
                           child: FilledButton.icon(
-                            onPressed:
-                                _habit.todayCompleted ? null : _complete,
+                            onPressed: _habit.todayCompleted ? null : _complete,
                             icon: const Icon(Icons.check),
-                            label: Text(_habit.todayCompleted
-                                ? 'Completed'
-                                : 'Complete'),
+                            label: Text(
+                              _habit.todayCompleted ? 'Completed' : 'Complete',
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -237,8 +251,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                   _logsLoading
                       ? const SizedBox(
                           height: 200,
-                          child:
-                              Center(child: CircularProgressIndicator()))
+                          child: Center(child: CircularProgressIndicator()),
+                        )
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: StreakScoreChart(logs: _logs),
@@ -248,8 +262,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                   _logsLoading
                       ? const SizedBox(
                           height: 200,
-                          child:
-                              Center(child: CircularProgressIndicator()))
+                          child: Center(child: CircularProgressIndicator()),
+                        )
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: FrequencyBarChart(logs: _logs),
@@ -259,8 +273,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                   _logsLoading
                       ? const SizedBox(
                           height: 114,
-                          child:
-                              Center(child: CircularProgressIndicator()))
+                          child: Center(child: CircularProgressIndicator()),
+                        )
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: HabitHeatmapWidget(logs: _logs, habit: _habit),
@@ -271,20 +285,32 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Card(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _infoRow('Intensity',
-                                _habit.intensity.isNotEmpty ? _habit.intensity[0].toUpperCase() + _habit.intensity.substring(1) : 'Unknown'),
+                            _infoRow(
+                              'Intensity',
+                              _habit.intensity.isNotEmpty
+                                  ? _habit.intensity[0].toUpperCase() +
+                                        _habit.intensity.substring(1)
+                                  : 'Unknown',
+                            ),
                             _infoRow('Tracking', _habit.trackingMethod),
                             if (_habit.pluginId != null)
                               _infoRow('Plugin', _habit.pluginId!),
                             _infoRow('Visibility', _habit.visibility),
-                            _infoRow('Created',
-                                _habit.createdAt.toLocal().toString().split('.').first),
+                            _infoRow(
+                              'Created',
+                              _habit.createdAt
+                                  .toLocal()
+                                  .toString()
+                                  .split('.')
+                                  .first,
+                            ),
                           ],
                         ),
                       ),

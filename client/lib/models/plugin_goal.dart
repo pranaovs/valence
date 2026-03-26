@@ -18,8 +18,8 @@ class PluginGoal {
   }
 
   Map<String, dynamic> toJson() => {
-        'metric': metric,
-        'operator': operator,
-        'value': value,
-      };
+    'metric': metric,
+    'operator': operator,
+    'value': value,
+  };
 }

@@ -70,10 +70,11 @@ class FrequencyBarChart extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        DateFormat('d/M')
-                            .format(weekBuckets[idx].weekStart),
+                        DateFormat('d/M').format(weekBuckets[idx].weekStart),
                         style: TextStyle(
-                            fontSize: 10, color: cs.onSurfaceVariant),
+                          fontSize: 10,
+                          color: cs.onSurfaceVariant,
+                        ),
                       ),
                     );
                   },
@@ -89,15 +90,17 @@ class FrequencyBarChart extends StatelessWidget {
                     toY: entry.value.completed.toDouble(),
                     color: cs.primary,
                     width: 16,
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(4)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(4),
+                    ),
                   ),
                   BarChartRodData(
                     toY: entry.value.missed.toDouble(),
                     color: cs.onSurface.withValues(alpha: 0.15),
                     width: 16,
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(4)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(4),
+                    ),
                   ),
                 ],
               );
@@ -132,13 +135,14 @@ class FrequencyBarChart extends StatelessWidget {
 
     for (final log in sorted) {
       final date = DateTime.parse(log.date);
-      final weekStart =
-          date.subtract(Duration(days: date.weekday - 1));
-      final normalizedStart =
-          DateTime(weekStart.year, weekStart.month, weekStart.day);
+      final weekStart = date.subtract(Duration(days: date.weekday - 1));
+      final normalizedStart = DateTime(
+        weekStart.year,
+        weekStart.month,
+        weekStart.day,
+      );
 
-      if (currentWeekStart == null ||
-          normalizedStart != currentWeekStart) {
+      if (currentWeekStart == null || normalizedStart != currentWeekStart) {
         if (currentWeekStart != null) {
           buckets.add(_WeekBucket(currentWeekStart, completed, missed));
         }

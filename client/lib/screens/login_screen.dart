@@ -58,8 +58,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   'Valence',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -94,17 +94,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'Valence',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineLarge
+                      style: Theme.of(context).textTheme.headlineLarge
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Build habits together',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 40),
 
@@ -197,7 +195,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: Text(auth.isSignUp ? 'Create Account' : 'Sign In'),
+                        child: Text(
+                          auth.isSignUp ? 'Create Account' : 'Sign In',
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),

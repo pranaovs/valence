@@ -30,8 +30,10 @@ void showGroupHelpSheet(BuildContext context) {
               ),
             ),
             const ExpansionTile(
-              title: Text('What is a Group?',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                'What is a Group?',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               initiallyExpanded: true,
               children: [
                 Padding(
@@ -43,8 +45,10 @@ void showGroupHelpSheet(BuildContext context) {
                         'Groups are teams of 3-7 friends who hold each other accountable for building habits together.',
                       ),
                       SizedBox(height: 12),
-                      Text('How Chain Links Work',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'How Chain Links Work',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(height: 4),
                       Text(
                         'Each day, a chain link is forged based on group completion:\n\n'
@@ -54,8 +58,10 @@ void showGroupHelpSheet(BuildContext context) {
                         'Your individual streaks are NEVER affected by group performance.',
                       ),
                       SizedBox(height: 12),
-                      Text('Group Tiers',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'Group Tiers',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(height: 4),
                       Text(
                         '• Spark — 0+ days (default)\n'
@@ -70,8 +76,10 @@ void showGroupHelpSheet(BuildContext context) {
               ],
             ),
             const ExpansionTile(
-              title: Text('What are Freezes?',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                'What are Freezes?',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -82,8 +90,10 @@ void showGroupHelpSheet(BuildContext context) {
                         'Altruistic streak freezes protect your group\'s chain when not enough members complete their habits.',
                       ),
                       SizedBox(height: 12),
-                      Text('How it works:',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'How it works:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(height: 4),
                       Text(
                         '• Costs 100 Sparks from your balance\n'
@@ -99,16 +109,20 @@ void showGroupHelpSheet(BuildContext context) {
               ],
             ),
             const ExpansionTile(
-              title: Text('Nudges & Kudos',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                'Nudges & Kudos',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Nudge',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'Nudge',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(height: 4),
                       Text(
                         'Nudge a group member who hasn\'t completed their habits yet today. '
@@ -118,8 +132,10 @@ void showGroupHelpSheet(BuildContext context) {
                         '• May include a fun meme GIF if the receiver has memes enabled',
                       ),
                       SizedBox(height: 12),
-                      Text('Kudos',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'Kudos',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(height: 4),
                       Text(
                         'Send kudos to celebrate a group member who completed all their habits. '

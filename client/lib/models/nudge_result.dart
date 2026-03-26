@@ -27,10 +27,12 @@ class NudgeResult {
       id: (nudge['id'] as String?) ?? '',
       senderId: (nudge['senderId'] ?? nudge['sender_id'] ?? '') as String,
       receiverId: (nudge['receiverId'] ?? nudge['receiver_id'] ?? '') as String,
-      llmGeneratedMessage: (nudge['llmGeneratedMessage'] ??
-          nudge['llm_generated_message'] ??
-          json['message'] ??
-          '') as String,
+      llmGeneratedMessage:
+          (nudge['llmGeneratedMessage'] ??
+                  nudge['llm_generated_message'] ??
+                  json['message'] ??
+                  '')
+              as String,
       memeGifUrl: meme?['url'] as String?,
       memeGifPreview: meme?['preview'] as String?,
     );

@@ -62,12 +62,9 @@ class Habit {
       redirectUrl: (json['redirectUrl'] ?? json['redirect_url']) as String?,
       visibility: (json['visibility'] as String?) ?? 'full',
       isActive: (json['isActive'] ?? json['is_active'] ?? true) as bool,
-      currentStreak:
-          _toInt(json['currentStreak'] ?? json['current_streak']),
-      longestStreak:
-          _toInt(json['longestStreak'] ?? json['longest_streak']),
-      totalCompleted:
-          _toInt(json['totalCompleted'] ?? json['total_completed']),
+      currentStreak: _toInt(json['currentStreak'] ?? json['current_streak']),
+      longestStreak: _toInt(json['longestStreak'] ?? json['longest_streak']),
+      totalCompleted: _toInt(json['totalCompleted'] ?? json['total_completed']),
       goalStage:
           (json['goalStage'] ?? json['goal_stage'] ?? 'ignition') as String,
       lastCompletedDate:
@@ -75,11 +72,15 @@ class Habit {
       todayCompleted:
           (json['completedToday'] ?? json['today_completed'] ?? false) as bool,
       frequencyRule: _asMap(json['frequencyRule'] ?? json['frequency_rule']),
-      frequencyStatus: _asMap(json['frequencyStatus'] ?? json['frequency_status']),
+      frequencyStatus: _asMap(
+        json['frequencyStatus'] ?? json['frequency_status'],
+      ),
       createdAt: DateTime.parse(
-          (json['createdAt'] ?? json['created_at']) as String),
+        (json['createdAt'] ?? json['created_at']) as String,
+      ),
       updatedAt: DateTime.parse(
-          (json['updatedAt'] ?? json['updated_at']) as String),
+        (json['updatedAt'] ?? json['updated_at']) as String,
+      ),
     );
   }
 

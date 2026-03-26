@@ -6,11 +6,7 @@ class GroupCard extends StatelessWidget {
   final Group group;
   final VoidCallback? onTap;
 
-  const GroupCard({
-    super.key,
-    required this.group,
-    this.onTap,
-  });
+  const GroupCard({super.key, required this.group, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +29,8 @@ class GroupCard extends StatelessWidget {
                     Text(
                       group.name,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
+                        fontWeight: FontWeight.w500,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -43,12 +39,14 @@ class GroupCard extends StatelessWidget {
                       children: [
                         _badge(context, label: tier.name),
                         const SizedBox(width: 6),
-                        _badge(context,
-                            label: '${group.memberCount} members'),
+                        _badge(context, label: '${group.memberCount} members'),
                         if (group.role == 'admin') ...[
                           const SizedBox(width: 6),
-                          Icon(Icons.shield_outlined,
-                              size: 14, color: cs.onSurfaceVariant),
+                          Icon(
+                            Icons.shield_outlined,
+                            size: 14,
+                            color: cs.onSurfaceVariant,
+                          ),
                         ],
                       ],
                     ),
@@ -58,14 +56,17 @@ class GroupCard extends StatelessWidget {
               const SizedBox(width: 8),
               Column(
                 children: [
-                  Icon(Icons.local_fire_department,
-                      color: cs.onSurfaceVariant, size: 20),
+                  Icon(
+                    Icons.local_fire_department,
+                    color: cs.onSurfaceVariant,
+                    size: 20,
+                  ),
                   Text(
                     '${group.currentStreak}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: cs.onSurface,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: cs.onSurface,
+                    ),
                   ),
                 ],
               ),
@@ -87,9 +88,9 @@ class GroupCard extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
+          color: cs.onSurfaceVariant,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

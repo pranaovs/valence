@@ -35,9 +35,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
     await context.read<AuthProvider>().register(
-          name: _nameController.text.trim(),
-          timezone: _timezone,
-        );
+      name: _nameController.text.trim(),
+      timezone: _timezone,
+    );
   }
 
   @override
@@ -65,17 +65,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'Welcome to Valence!',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium
+                      style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "Let's set up your profile",
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 40),
 

@@ -73,17 +73,15 @@ class _ShopScreenState extends State<ShopScreen> {
     if (user == null) return;
 
     if (user.sparks < item.sparksCost) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Not enough Sparks.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Not enough Sparks.')));
       return;
     }
 
     if (!item.meetsRank) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Requires ${item.minRank} rank or higher.'),
-        ),
+        SnackBar(content: Text('Requires ${item.minRank} rank or higher.')),
       );
       return;
     }
@@ -111,22 +109,22 @@ class _ShopScreenState extends State<ShopScreen> {
       final token = await _authService.getIdToken();
       await _apiService.purchaseItem(token: token, itemId: item.id);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Purchased ${item.name}!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Purchased ${item.name}!')));
         _load();
       }
     } on ApiException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Purchase failed.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Purchase failed.')));
       }
     }
   }
@@ -146,14 +144,13 @@ class _ShopScreenState extends State<ShopScreen> {
               child: Center(
                 child: Row(
                   children: [
-                    Text('${user.sparks} Sparks',
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelLarge
-                            ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: cs.onSurfaceVariant,
-                            )),
+                    Text(
+                      '${user.sparks} Sparks',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -186,10 +183,7 @@ class _ShopScreenState extends State<ShopScreen> {
           ),
           // Items
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: _load,
-              child: _buildBody(cs),
-            ),
+            child: RefreshIndicator(onRefresh: _load, child: _buildBody(cs)),
           ),
         ],
       ),
@@ -218,9 +212,11 @@ class _ShopScreenState extends State<ShopScreen> {
           SizedBox(height: 100),
           Icon(Icons.storefront, size: 64, color: Colors.grey),
           SizedBox(height: 16),
-          Text('No items available.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 16)),
+          Text(
+            'No items available.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 16),
+          ),
         ],
       );
     }

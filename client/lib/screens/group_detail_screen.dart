@@ -90,7 +90,8 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                   builder: (ctx) => AlertDialog(
                     title: const Text('Leave Group'),
                     content: Text(
-                        'Are you sure you want to leave "${_group.name}"?'),
+                      'Are you sure you want to leave "${_group.name}"?',
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(ctx).pop(false),
@@ -104,15 +105,13 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                   ),
                 );
                 if (confirmed == true && mounted) {
-                  final success =
-                      await groupProv.leaveGroup(_group.id);
+                  final success = await groupProv.leaveGroup(_group.id);
                   if (mounted) {
                     if (success) {
                       nav.pop();
                     } else {
                       messenger.showSnackBar(
-                        const SnackBar(
-                            content: Text('Failed to leave group.')),
+                        const SnackBar(content: Text('Failed to leave group.')),
                       );
                     }
                   }
@@ -120,10 +119,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
               }
             },
             itemBuilder: (_) => [
-              const PopupMenuItem(
-                value: 'leave',
-                child: Text('Leave Group'),
-              ),
+              const PopupMenuItem(value: 'leave', child: Text('Leave Group')),
             ],
           ),
         ],
@@ -170,8 +166,11 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                     backgroundColor: cs.onSurface.withValues(alpha: 0.08),
                     color: cs.primary,
                   ),
-                  Icon(Icons.local_fire_department,
-                      color: cs.onSurfaceVariant, size: 24),
+                  Icon(
+                    Icons.local_fire_department,
+                    color: cs.onSurfaceVariant,
+                    size: 24,
+                  ),
                 ],
               ),
             ),
@@ -184,30 +183,37 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: cs.onSurface.withValues(alpha: 0.06),
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: Text(tier.name,
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: cs.onSurfaceVariant,
-                                  fontWeight: FontWeight.w600,
-                                )),
+                        child: Text(
+                          tier.name,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: cs.onSurfaceVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      Text('${_group.currentStreak}/$nextTier days',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: cs.onSurfaceVariant,
-                              )),
+                      Text(
+                        '${_group.currentStreak}/$nextTier days',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Streak: ${_group.currentStreak}  ·  Longest: ${_group.longestStreak}  ·  Links: ${_group.totalLinks}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: cs.onSurfaceVariant,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -225,9 +231,11 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         todayStatus['members_done'] ?? todayStatus['membersDone'] ?? 0;
     final membersTotal =
         todayStatus['members_total'] ?? todayStatus['membersTotal'] ?? 0;
-    final projectedLink = (todayStatus['projected_link_type'] ??
-        todayStatus['projectedLinkType'] ??
-        'broken') as String;
+    final projectedLink =
+        (todayStatus['projected_link_type'] ??
+                todayStatus['projectedLinkType'] ??
+                'broken')
+            as String;
     final currentUserId = context.read<AuthProvider>().user?.id;
 
     return Card(
@@ -239,20 +247,25 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
           children: [
             Row(
               children: [
-                Text("Today's Status",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.w600)),
+                Text(
+                  "Today's Status",
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
                 const Spacer(),
-                Icon(GroupTiers.chainLinkIcon(projectedLink),
-                    color: cs.onSurfaceVariant,
-                    size: 18),
+                Icon(
+                  GroupTiers.chainLinkIcon(projectedLink),
+                  color: cs.onSurfaceVariant,
+                  size: 18,
+                ),
                 const SizedBox(width: 4),
-                Text('$membersDone/$membersTotal',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: cs.onSurfaceVariant,
-                        )),
+                Text(
+                  '$membersDone/$membersTotal',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                ),
               ],
             ),
             if (_todayMembers.isNotEmpty) ...[
@@ -274,8 +287,10 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                       ),
                       const SizedBox(width: 8),
                       Expanded(child: Text(m.name)),
-                      Text('${m.habitsCompleted}/${m.habitsTotal}',
-                          style: Theme.of(context).textTheme.bodySmall),
+                      Text(
+                        '${m.habitsCompleted}/${m.habitsTotal}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                       if (!isSelf) ...[
                         const SizedBox(width: 4),
                         if (m.allDoneToday)
@@ -316,9 +331,9 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
 
   Future<void> _sendNudge(String receiverId, String receiverName) async {
     final result = await context.read<GroupProvider>().sendNudge(
-          receiverId: receiverId,
-          groupId: _group.id,
-        );
+      receiverId: receiverId,
+      groupId: _group.id,
+    );
     if (!mounted) return;
 
     if (result != null) {
@@ -357,8 +372,10 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(context.read<GroupProvider>().errorMessage ??
-              'Failed to send nudge.'),
+          content: Text(
+            context.read<GroupProvider>().errorMessage ??
+                'Failed to send nudge.',
+          ),
         ),
       );
     }
@@ -366,21 +383,23 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
 
   Future<void> _sendKudos(String receiverId, String receiverName) async {
     final result = await context.read<GroupProvider>().sendKudos(
-          receiverId: receiverId,
-          groupId: _group.id,
-        );
+      receiverId: receiverId,
+      groupId: _group.id,
+    );
     if (!mounted) return;
 
     if (result != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kudos sent to $receiverName!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Kudos sent to $receiverName!')));
       _loadData();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(context.read<GroupProvider>().errorMessage ??
-              'Failed to send kudos.'),
+          content: Text(
+            context.read<GroupProvider>().errorMessage ??
+                'Failed to send kudos.',
+          ),
         ),
       );
     }
@@ -394,11 +413,12 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Chain History',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w600)),
+            Text(
+              'Chain History',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
             SizedBox(
               height: 40,
@@ -419,7 +439,9 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                         shape: BoxShape.circle,
                         color: isBroken
                             ? cs.onSurface.withValues(alpha: 0.08)
-                            : cs.primary.withValues(alpha: link.linkType == 'gold' ? 0.25 : 0.12),
+                            : cs.primary.withValues(
+                                alpha: link.linkType == 'gold' ? 0.25 : 0.12,
+                              ),
                         border: link.freezeUsed
                             ? Border.all(color: cs.outline, width: 1.5)
                             : null,
@@ -450,33 +472,37 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Weekly Leaderboard',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w600)),
+            Text(
+              'Weekly Leaderboard',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
-            ..._leaderboard.map((score) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 24,
-                        child: Text(
-                          '#${score.rankInGroup ?? '-'}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
+            ..._leaderboard.map(
+              (score) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: Text(
+                        '#${score.rankInGroup ?? '-'}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(child: Text(score.userName)),
-                      Text('${score.contributionScore} pts',
-                          style: Theme.of(context).textTheme.bodySmall),
-                    ],
-                  ),
-                )),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(score.userName)),
+                    Text(
+                      '${score.contributionScore} pts',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -494,11 +520,12 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Group Freeze',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w600)),
+            Text(
+              'Group Freeze',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 4),
             Text(
               'Protect the chain for today. Costs 100 Sparks. Max 1/day.',
@@ -516,8 +543,10 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(result?.message ??
-                                    'Failed to activate freeze.'),
+                                content: Text(
+                                  result?.message ??
+                                      'Failed to activate freeze.',
+                                ),
                               ),
                             );
                             if (result != null) _loadData();
@@ -528,8 +557,10 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                   label: const Text('Use Freeze (100 Sparks)'),
                 ),
                 const Spacer(),
-                Text('$sparks Sparks',
-                    style: Theme.of(context).textTheme.bodySmall),
+                Text(
+                  '$sparks Sparks',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ],
             ),
           ],
@@ -549,20 +580,20 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Invite Code',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleSmall
-                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  Text(
+                    'Invite Code',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(_group.inviteCode,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.copyWith(
-                            fontFamily: 'monospace',
-                            letterSpacing: 2,
-                          )),
+                  Text(
+                    _group.inviteCode,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontFamily: 'monospace',
+                      letterSpacing: 2,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -590,27 +621,37 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Activity',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w600)),
+            Text(
+              'Activity',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
-            ..._feed.take(20).map((item) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(_feedIcon(item.type),
-                          size: 16, color: cs.onSurfaceVariant),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(item.displayText,
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ),
-                    ],
+            ..._feed
+                .take(20)
+                .map(
+                  (item) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          _feedIcon(item.type),
+                          size: 16,
+                          color: cs.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            item.displayText,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                ),
           ],
         ),
       ),

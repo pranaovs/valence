@@ -84,8 +84,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline,
-                  size: 48, color: Theme.of(context).colorScheme.error),
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: Theme.of(context).colorScheme.error,
+              ),
               const SizedBox(height: 16),
               Text(provider.errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
@@ -156,19 +159,20 @@ class _InsightsScreenState extends State<InsightsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Analysis',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: cs.onSurface,
-                    )),
+            Text(
+              'Analysis',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: cs.onSurface,
+              ),
+            ),
             const SizedBox(height: 10),
-            Text(analysis,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: cs.onSurfaceVariant,
-                    )),
+            Text(
+              analysis,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+            ),
           ],
         ),
       ),
@@ -192,50 +196,52 @@ class _InsightsScreenState extends State<InsightsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: cs.onSurface,
-                    )),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: cs.onSurface,
+              ),
+            ),
             const SizedBox(height: 12),
-            ...sorted.map((entry) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(labelFn(entry.key),
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: cs.onSurfaceVariant,
-                                  )),
-                          Text('${entry.value}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: cs.onSurface,
-                                  )),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(3),
-                        child: LinearProgressIndicator(
-                          value: entry.value / maxVal,
-                          backgroundColor: cs.onSurface.withValues(alpha: 0.08),
-                          color: cs.primary,
-                          minHeight: 6,
+            ...sorted.map(
+              (entry) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          labelFn(entry.key),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: cs.onSurfaceVariant),
                         ),
+                        Text(
+                          '${entry.value}',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: cs.onSurface,
+                              ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(3),
+                      child: LinearProgressIndicator(
+                        value: entry.value / maxVal,
+                        backgroundColor: cs.onSurface.withValues(alpha: 0.08),
+                        color: cs.primary,
+                        minHeight: 6,
                       ),
-                    ],
-                  ),
-                )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -255,16 +261,18 @@ class _InsightsScreenState extends State<InsightsScreen> {
       case 'other':
         return 'Other';
       default:
-        return reason.isNotEmpty ? reason[0].toUpperCase() + reason.substring(1) : reason;
+        return reason.isNotEmpty
+            ? reason[0].toUpperCase() + reason.substring(1)
+            : reason;
     }
   }
 
   void _showReflectionSheet(BuildContext context) {
     final habits = context.read<HabitProvider>().habits;
     if (habits.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No habits to reflect on.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No habits to reflect on.')));
       return;
     }
 
@@ -272,7 +280,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
     if (completedToday.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Complete some habits first to reflect on them.')),
+          content: Text('Complete some habits first to reflect on them.'),
+        ),
       );
       return;
     }
@@ -331,22 +340,25 @@ class _ReflectionSheetState extends State<_ReflectionSheet> {
       };
     }).toList();
 
-    final success =
-        await context.read<InsightsProvider>().submitReflections(reflections);
+    final success = await context.read<InsightsProvider>().submitReflections(
+      reflections,
+    );
 
     if (!mounted) return;
     setState(() => _isSubmitting = false);
 
     if (success) {
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Reflections saved!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Reflections saved!')));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(context.read<InsightsProvider>().errorMessage ??
-              'Failed to save reflections.'),
+          content: Text(
+            context.read<InsightsProvider>().errorMessage ??
+                'Failed to save reflections.',
+          ),
         ),
       );
     }
@@ -379,11 +391,12 @@ class _ReflectionSheetState extends State<_ReflectionSheet> {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    Text('Daily Reflection',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'Daily Reflection',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const Spacer(),
                     FilledButton(
                       onPressed: _isSubmitting ? null : _submit,
@@ -391,8 +404,8 @@ class _ReflectionSheetState extends State<_ReflectionSheet> {
                           ? const SizedBox(
                               width: 16,
                               height: 16,
-                              child:
-                                  CircularProgressIndicator(strokeWidth: 2))
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
                           : const Text('Save'),
                     ),
                   ],
@@ -417,39 +430,45 @@ class _ReflectionSheetState extends State<_ReflectionSheet> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(habit.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          habit.name,
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 8),
-                        Text('How difficult was it today?',
-                            style: Theme.of(context).textTheme.bodySmall),
+                        Text(
+                          'How difficult was it today?',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                         const SizedBox(height: 4),
                         Row(
                           children: List.generate(5, (i) {
                             final level = i + 1;
                             return Expanded(
                               child: GestureDetector(
-                                onTap: () => setState(
-                                    () => _ratings[habit.id] = level),
+                                onTap: () =>
+                                    setState(() => _ratings[habit.id] = level),
                                 child: Container(
                                   margin: const EdgeInsets.symmetric(
-                                      horizontal: 2),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
+                                    horizontal: 2,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: level <= rating
-                                        ? _difficultyColor(rating)
-                                            .withValues(alpha: 0.2)
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainerHighest,
+                                        ? _difficultyColor(
+                                            rating,
+                                          ).withValues(alpha: 0.2)
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.surfaceContainerHighest,
                                     borderRadius: BorderRadius.circular(8),
                                     border: level == rating
                                         ? Border.all(
                                             color: _difficultyColor(rating),
-                                            width: 2)
+                                            width: 2,
+                                          )
                                         : null,
                                   ),
                                   child: Center(
@@ -474,24 +493,24 @@ class _ReflectionSheetState extends State<_ReflectionSheet> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Easy',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
-                                    )),
-                            Text('Hard',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
-                                    )),
+                            Text(
+                              'Easy',
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                            Text(
+                              'Hard',
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 8),

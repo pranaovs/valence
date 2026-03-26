@@ -50,16 +50,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         },
       );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Settings saved.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Settings saved.')));
         Navigator.of(context).pop();
       }
     } on ApiException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } catch (e) {
       if (mounted) {
@@ -98,9 +98,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           if (user != null) ...[
             ListTile(
               leading: CircleAvatar(
-                child: Text(user.name.isNotEmpty
-                    ? user.name[0].toUpperCase()
-                    : '?'),
+                child: Text(
+                  user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
+                ),
               ),
               title: Text(user.name),
               subtitle: Text(user.email),
@@ -116,21 +116,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Persona type
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text('Persona',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            child: Text(
+              'Persona',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
           ),
           RadioGroup<String>(
             groupValue: _personaType,
-            onChanged: (v) { if (v != null) setState(() => _personaType = v); },
+            onChanged: (v) {
+              if (v != null) setState(() => _personaType = v);
+            },
             child: Column(
               children: [
                 RadioListTile<String>(
                   title: const Text('Achiever'),
-                  subtitle:
-                      const Text('Stats-forward: streaks, XP, rank progress'),
+                  subtitle: const Text(
+                    'Stats-forward: streaks, XP, rank progress',
+                  ),
                   value: 'achiever',
                 ),
                 RadioListTile<String>(
@@ -152,11 +156,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Notification preferences
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text('Notifications',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            child: Text(
+              'Notifications',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
           ),
           SwitchListTile(
             title: const Text('Morning activation'),

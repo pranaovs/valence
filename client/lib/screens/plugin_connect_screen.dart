@@ -158,8 +158,7 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-              provider.errorMessage ?? 'Failed to connect plugin.'),
+          content: Text(provider.errorMessage ?? 'Failed to connect plugin.'),
         ),
       );
     }
@@ -192,17 +191,13 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
     if (mounted) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${widget.meta.displayName} disconnected.'),
-          ),
+          SnackBar(content: Text('${widget.meta.displayName} disconnected.')),
         );
         Navigator.of(context).pop(true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              provider.errorMessage ?? 'Failed to disconnect.',
-            ),
+            content: Text(provider.errorMessage ?? 'Failed to disconnect.'),
           ),
         );
       }
@@ -240,9 +235,7 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
           ],
 
           // Device-based plugin (screen_time)
-          if (widget.meta.isDeviceBased) ...[
-            _buildDevicePluginSection(cs),
-          ],
+          if (widget.meta.isDeviceBased) ...[_buildDevicePluginSection(cs)],
 
           // OAuth info
           if (widget.meta.isOAuth && !widget.meta.isDeviceBased) ...[
@@ -270,7 +263,9 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : Text(isConnected ? 'Reconnect' : 'Connect'),
               ),
@@ -289,27 +284,39 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
-              child: Icon(widget.meta.icon,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant, size: 28),
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.06),
+              child: Icon(
+                widget.meta.icon,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                size: 28,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.meta.displayName,
-                      style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    widget.meta.displayName,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 4),
-                  Text(widget.meta.description,
-                      style: Theme.of(context).textTheme.bodySmall),
+                  Text(
+                    widget.meta.description,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
             ),
             if (isConnected)
               Chip(
-                avatar: Icon(Icons.check_rounded,
-                    size: 16, color: Theme.of(context).colorScheme.primary),
+                avatar: Icon(
+                  Icons.check_rounded,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 label: const Text('Connected'),
                 visualDensity: VisualDensity.compact,
               ),
@@ -327,16 +334,19 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Status',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              'Status',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             _statusRow('Status', widget.currentPlugin!.status),
             if (widget.currentPlugin!.lastSyncedAt != null)
-              _statusRow('Last Synced',
-                  _formatTime(widget.currentPlugin!.lastSyncedAt!)),
+              _statusRow(
+                'Last Synced',
+                _formatTime(widget.currentPlugin!.lastSyncedAt!),
+              ),
           ],
         ),
       ),
@@ -372,9 +382,7 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                       Expanded(
                         child: Text(
                           'Usage Access Permission Required',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
+                          style: Theme.of(context).textTheme.titleSmall
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -393,7 +401,8 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                     child: FilledButton.icon(
                       onPressed: () async {
                         final provider = context.read<PluginProvider>();
-                        final opened = await provider.requestScreenTimePermission();
+                        final opened = await provider
+                            .requestScreenTimePermission();
                         if (!opened && mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -414,8 +423,8 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                   Text(
                     'Settings → Apps → Special access → Usage access → Valence',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: cs.onSurfaceVariant,
-                        ),
+                      color: cs.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -429,7 +438,10 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.primary),
+                  Icon(
+                    Icons.check_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -458,28 +470,30 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Today's Screen Time",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall
-                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      "Today's Screen Time",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Center(
                       child: Column(
                         children: [
                           Text(
                             _formatMinutes(_screenTimeData!.screenMinutes),
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineLarge
+                            style: Theme.of(context).textTheme.headlineLarge
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: _screenTimeColor(
-                                      _screenTimeData!.screenMinutes),
+                                    _screenTimeData!.screenMinutes,
+                                  ),
                                 ),
                           ),
-                          Text('total screen time',
-                              style: Theme.of(context).textTheme.bodySmall),
+                          Text(
+                            'total screen time',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ],
                       ),
                     ),
@@ -487,28 +501,30 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                       const SizedBox(height: 16),
                       const Divider(),
                       const SizedBox(height: 8),
-                      Text('Top Apps',
-                          style: Theme.of(context).textTheme.titleSmall),
+                      Text(
+                        'Top Apps',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 8),
-                      ..._screenTimeData!.appUsage.entries.take(10).map(
+                      ..._screenTimeData!.appUsage.entries
+                          .take(10)
+                          .map(
                             (entry) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 3),
+                              padding: const EdgeInsets.symmetric(vertical: 3),
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: Text(entry.key,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall),
+                                    child: Text(
+                                      entry.key,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall,
+                                    ),
                                   ),
                                   Text(
                                     _formatMinutes(entry.value),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.bold),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -533,9 +549,11 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.cloud_upload),
-                label: Text(_isReporting
-                    ? 'Reporting...'
-                    : 'Report ${_screenTimeData!.screenMinutes} min to Valence'),
+                label: Text(
+                  _isReporting
+                      ? 'Reporting...'
+                      : 'Report ${_screenTimeData!.screenMinutes} min to Valence',
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -561,19 +579,26 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('How it works',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  'How it works',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
                 _howItWorksStep('1', 'Grant usage access permission above'),
-                _howItWorksStep('2',
-                    'Create a habit with tracking method "Plugin" and plugin ID "screen_time"'),
-                _howItWorksStep('3',
-                    'Set a goal like "screen time ≤ 120 min" on your habit'),
-                _howItWorksStep('4',
-                    'Report your screen time here — the habit auto-completes if you\'re under your goal'),
+                _howItWorksStep(
+                  '2',
+                  'Create a habit with tracking method "Plugin" and plugin ID "screen_time"',
+                ),
+                _howItWorksStep(
+                  '3',
+                  'Set a goal like "screen time ≤ 120 min" on your habit',
+                ),
+                _howItWorksStep(
+                  '4',
+                  'Report your screen time here — the habit auto-completes if you\'re under your goal',
+                ),
               ],
             ),
           ),
@@ -590,17 +615,21 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
         children: [
           CircleAvatar(
             radius: 10,
-            backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
-            child: Text(number,
-                style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.06),
+            child: Text(
+              number,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(text,
-                style: Theme.of(context).textTheme.bodySmall),
+            child: Text(text, style: Theme.of(context).textTheme.bodySmall),
           ),
         ],
       ),
@@ -610,9 +639,9 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
   Future<void> _launchOAuth() async {
     final userId = context.read<AuthProvider>().user?.id;
     if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Not logged in.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Not logged in.')));
       return;
     }
 
@@ -624,13 +653,14 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
     };
     if (oauthPath == null) return;
 
-    final url = Uri.parse(
-      '${ApiConfig.baseUrl}$oauthPath?user_id=$userId',
-    );
+    final url = Uri.parse('${ApiConfig.baseUrl}$oauthPath?user_id=$userId');
 
     setState(() => _isSaving = true);
     try {
-      final launched = await launchUrl(url, mode: LaunchMode.externalApplication);
+      final launched = await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
       if (!launched && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Could not open browser.')),
@@ -682,9 +712,11 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.open_in_new),
-            label: Text(isConnected
-                ? 'Reconnect with ${widget.meta.displayName}'
-                : 'Connect with ${widget.meta.displayName}'),
+            label: Text(
+              isConnected
+                  ? 'Reconnect with ${widget.meta.displayName}'
+                  : 'Connect with ${widget.meta.displayName}',
+            ),
           ),
         ),
       ],
@@ -734,7 +766,9 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : Text(isConnected ? 'Update' : 'Connect'),
                 ),
@@ -751,8 +785,7 @@ class _PluginConnectScreenState extends State<PluginConnectScreen>
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Text('$label: ',
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w500)),
           Text(value),
         ],
       ),

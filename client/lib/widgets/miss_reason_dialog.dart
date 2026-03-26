@@ -43,10 +43,7 @@ class _MissReasonDialogState extends State<MissReasonDialog> {
               labelText: 'Reason',
             ),
             items: _categories
-                .map((c) => DropdownMenuItem(
-                      value: c.$1,
-                      child: Text(c.$2),
-                    ))
+                .map((c) => DropdownMenuItem(value: c.$1, child: Text(c.$2)))
                 .toList(),
             onChanged: (v) {
               if (v != null) setState(() => _category = v);

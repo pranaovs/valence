@@ -27,10 +27,10 @@ class GroupMemberStatus {
       role: (json['role'] as String?) ?? 'member',
       allDoneToday:
           (json['allDoneToday'] ?? json['all_done_today'] ?? false) as bool,
-      habitsCompleted:
-          _toInt(json['habitsCompleted'] ?? json['habits_completed']),
-      habitsTotal:
-          _toInt(json['habitsTotal'] ?? json['habits_total']),
+      habitsCompleted: _toInt(
+        json['habitsCompleted'] ?? json['habits_completed'],
+      ),
+      habitsTotal: _toInt(json['habitsTotal'] ?? json['habits_total']),
       rank: (json['rank'] as String?) ?? 'bronze',
     );
   }

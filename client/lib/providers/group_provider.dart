@@ -20,8 +20,8 @@ class GroupProvider extends ChangeNotifier {
   String? _errorMessage;
 
   GroupProvider({AuthService? authService, ApiService? apiService})
-      : _authService = authService ?? AuthService(),
-        _apiService = apiService ?? ApiService();
+    : _authService = authService ?? AuthService(),
+      _apiService = apiService ?? ApiService();
 
   Future<String> _getToken() async {
     return _authService.getIdToken();
@@ -115,8 +115,7 @@ class GroupProvider extends ChangeNotifier {
   Future<Map<String, dynamic>?> getGroupDetail(String groupId) async {
     try {
       final token = await _getToken();
-      return await _apiService.getGroupDetail(
-          token: token, groupId: groupId);
+      return await _apiService.getGroupDetail(token: token, groupId: groupId);
     } catch (e) {
       return null;
     }
@@ -125,8 +124,7 @@ class GroupProvider extends ChangeNotifier {
   Future<List<GroupDayLink>> getGroupStreak(String groupId) async {
     try {
       final token = await _getToken();
-      return await _apiService.getGroupStreak(
-          token: token, groupId: groupId);
+      return await _apiService.getGroupStreak(token: token, groupId: groupId);
     } catch (e) {
       return [];
     }
@@ -135,15 +133,16 @@ class GroupProvider extends ChangeNotifier {
   Future<List<GroupFeedItem>> getGroupFeed(String groupId) async {
     try {
       final token = await _getToken();
-      return await _apiService.getGroupFeed(
-          token: token, groupId: groupId);
+      return await _apiService.getGroupFeed(token: token, groupId: groupId);
     } catch (e) {
       return [];
     }
   }
 
-  Future<List<WeeklyScore>> getGroupLeaderboard(String groupId,
-      {String period = 'week'}) async {
+  Future<List<WeeklyScore>> getGroupLeaderboard(
+    String groupId, {
+    String period = 'week',
+  }) async {
     try {
       final token = await _getToken();
       final data = await _apiService.getGroupLeaderboard(
@@ -163,8 +162,7 @@ class GroupProvider extends ChangeNotifier {
   Future<List<GroupMemberStatus>> getGroupMembers(String groupId) async {
     try {
       final token = await _getToken();
-      return await _apiService.getGroupMembers(
-          token: token, groupId: groupId);
+      return await _apiService.getGroupMembers(token: token, groupId: groupId);
     } catch (e) {
       return [];
     }
@@ -173,8 +171,7 @@ class GroupProvider extends ChangeNotifier {
   Future<FreezeResult?> groupFreeze(String groupId) async {
     try {
       final token = await _getToken();
-      return await _apiService.groupFreeze(
-          token: token, groupId: groupId);
+      return await _apiService.groupFreeze(token: token, groupId: groupId);
     } on ApiException catch (e) {
       _errorMessage = e.message;
       notifyListeners();

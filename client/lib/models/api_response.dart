@@ -13,18 +13,18 @@ class ApiException implements Exception {
 
 class UserNotFoundException extends ApiException {
   const UserNotFoundException()
-      : super(
-          code: 'USER_NOT_FOUND',
-          message: 'No account found. Please register first.',
-        );
+    : super(
+        code: 'USER_NOT_FOUND',
+        message: 'No account found. Please register first.',
+      );
 }
 
 class UserExistsException extends ApiException {
   const UserExistsException()
-      : super(
-          code: 'USER_EXISTS',
-          message: 'A user with this account already exists.',
-        );
+    : super(
+        code: 'USER_EXISTS',
+        message: 'A user with this account already exists.',
+      );
 }
 
 class ApiResponse {
@@ -69,8 +69,6 @@ class ApiResponse {
     }
 
     final data = body['data'] as List;
-    return data
-        .map((item) => fromJson(item as Map<String, dynamic>))
-        .toList();
+    return data.map((item) => fromJson(item as Map<String, dynamic>)).toList();
   }
 }

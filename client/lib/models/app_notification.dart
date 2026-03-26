@@ -23,11 +23,11 @@ class AppNotification {
       type: (json['type'] as String?) ?? 'unknown',
       title: json['title'] as String?,
       body: (json['body'] ?? json['message']) as String?,
-      data: Map<String, dynamic>.from(
-          (json['data'] as Map?) ?? {}),
+      data: Map<String, dynamic>.from((json['data'] as Map?) ?? {}),
       read: (json['read'] as bool?) ?? false,
       createdAt: DateTime.parse(
-          (json['createdAt'] ?? json['created_at']) as String),
+        (json['createdAt'] ?? json['created_at']) as String,
+      ),
     );
   }
 

@@ -36,9 +36,7 @@ class HabitLog {
           (json['verificationSource'] ?? json['verification_source'])
               as String?,
       proofUrl: (json['proofUrl'] ?? json['proof_url']) as String?,
-      pluginMetrics: metricsRaw is Map<String, dynamic>
-          ? metricsRaw
-          : null,
+      pluginMetrics: metricsRaw is Map<String, dynamic> ? metricsRaw : null,
       reflectionDifficulty:
           (json['reflectionDifficulty'] ?? json['reflection_difficulty'])
               as int?,

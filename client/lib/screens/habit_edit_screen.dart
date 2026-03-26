@@ -39,8 +39,9 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.habit?.name ?? '');
-    _redirectUrlController =
-        TextEditingController(text: widget.habit?.redirectUrl ?? '');
+    _redirectUrlController = TextEditingController(
+      text: widget.habit?.redirectUrl ?? '',
+    );
     _goalValueController = TextEditingController(
       text: widget.habit?.pluginGoal?.value.toString() ?? '',
     );
@@ -66,8 +67,9 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
 
   Future<void> _fetchMetrics(String pluginId) async {
     setState(() => _loadingMetrics = true);
-    final metrics =
-        await context.read<PluginProvider>().getPluginMetrics(pluginId);
+    final metrics = await context.read<PluginProvider>().getPluginMetrics(
+      pluginId,
+    );
     if (mounted) {
       setState(() {
         _availableMetrics = metrics;
@@ -110,8 +112,7 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
         trackingMethod: _trackingMethod,
         pluginId: isPlugin ? _selectedPluginId : null,
         pluginGoal: pluginGoal,
-        redirectUrl:
-            isPlugin ? _redirectUrlController.text.trim() : null,
+        redirectUrl: isPlugin ? _redirectUrlController.text.trim() : null,
         visibility: _visibility,
       );
     } else {
@@ -121,8 +122,7 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
         trackingMethod: _trackingMethod,
         pluginId: isPlugin ? _selectedPluginId : null,
         pluginGoal: pluginGoal,
-        redirectUrl:
-            isPlugin ? _redirectUrlController.text.trim() : null,
+        redirectUrl: isPlugin ? _redirectUrlController.text.trim() : null,
         visibility: _visibility,
       );
     }
@@ -135,7 +135,8 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(provider.errorMessage ?? 'Something went wrong.')),
+          content: Text(provider.errorMessage ?? 'Something went wrong.'),
+        ),
       );
     }
   }
@@ -152,7 +153,8 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2))
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : const Text('Save'),
           ),
         ],
@@ -172,13 +174,11 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
                   border: OutlineInputBorder(),
                 ),
                 maxLength: 200,
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Name is required'
-                    : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Name is required' : null,
               ),
               const SizedBox(height: 24),
-              Text('Intensity',
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text('Intensity', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
               SegmentedButton<String>(
                 segments: const [
@@ -187,12 +187,13 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
                   ButtonSegment(value: 'intense', label: Text('Intense')),
                 ],
                 selected: {_intensity},
-                onSelectionChanged: (v) =>
-                    setState(() => _intensity = v.first),
+                onSelectionChanged: (v) => setState(() => _intensity = v.first),
               ),
               const SizedBox(height: 24),
-              Text('Tracking Method',
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                'Tracking Method',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               const SizedBox(height: 8),
               SegmentedButton<String>(
                 segments: const [
@@ -230,8 +231,7 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
                 ],
               ],
               const SizedBox(height: 24),
-              Text('Visibility',
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text('Visibility', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
               SegmentedButton<String>(
                 segments: const [
@@ -260,35 +260,51 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
 
     for (final p in connectedPlugins) {
       final meta = PluginRegistry.getMeta(p.id);
-      items.add(DropdownMenuItem(
-        value: p.id,
-        child: Row(
-          children: [
-            if (meta != null) ...[
-              Icon(meta.icon, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      items.add(
+        DropdownMenuItem(
+          value: p.id,
+          child: Row(
+            children: [
+              if (meta != null) ...[
+                Icon(
+                  meta.icon,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+              ],
+              Text(meta?.displayName ?? p.id),
               const SizedBox(width: 8),
+              Icon(
+                Icons.check_rounded,
+                size: 14,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ],
-            Text(meta?.displayName ?? p.id),
-            const SizedBox(width: 8),
-            Icon(Icons.check_rounded, size: 14, color: Theme.of(context).colorScheme.primary),
-          ],
+          ),
         ),
-      ));
+      );
       addedIds.add(p.id);
     }
 
     for (final meta in allPlugins) {
       if (!addedIds.contains(meta.id)) {
-        items.add(DropdownMenuItem(
-          value: meta.id,
-          child: Row(
-            children: [
-              Icon(meta.icon, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
-              const SizedBox(width: 8),
-              Text(meta.displayName),
-            ],
+        items.add(
+          DropdownMenuItem(
+            value: meta.id,
+            child: Row(
+              children: [
+                Icon(
+                  meta.icon,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Text(meta.displayName),
+              ],
+            ),
           ),
-        ));
+        );
       }
     }
 
@@ -308,10 +324,9 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
         });
         if (value != null) _fetchMetrics(value);
       },
-      validator: (v) =>
-          _trackingMethod == 'plugin' && (v == null || v.isEmpty)
-              ? 'Select a plugin'
-              : null,
+      validator: (v) => _trackingMethod == 'plugin' && (v == null || v.isEmpty)
+          ? 'Select a plugin'
+          : null,
     );
   }
 
@@ -353,11 +368,12 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Auto-complete Goal',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              'Auto-complete Goal',
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
             Text(
               'The habit will auto-complete when this goal is met.',
@@ -373,10 +389,12 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
                 isDense: true,
               ),
               items: _availableMetrics
-                  .map((m) => DropdownMenuItem(
-                        value: m.metric,
-                        child: Text('${m.label} (${m.unit})'),
-                      ))
+                  .map(
+                    (m) => DropdownMenuItem(
+                      value: m.metric,
+                      child: Text('${m.label} (${m.unit})'),
+                    ),
+                  )
                   .toList(),
               onChanged: (v) => setState(() => _selectedMetric = v),
             ),
@@ -395,11 +413,14 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
                     ),
                     items: const [
                       DropdownMenuItem(
-                          value: 'gte', child: Text('At least (≥)')),
+                        value: 'gte',
+                        child: Text('At least (≥)'),
+                      ),
                       DropdownMenuItem(
-                          value: 'lte', child: Text('At most (≤)')),
-                      DropdownMenuItem(
-                          value: 'eq', child: Text('Exactly (=)')),
+                        value: 'lte',
+                        child: Text('At most (≤)'),
+                      ),
+                      DropdownMenuItem(value: 'eq', child: Text('Exactly (=)')),
                     ],
                     onChanged: (v) {
                       if (v != null) setState(() => _selectedOperator = v);
@@ -416,10 +437,10 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
                       isDense: true,
                       hintText: _selectedMetric != null
                           ? _availableMetrics
-                              .where((m) => m.metric == _selectedMetric)
-                              .firstOrNull
-                              ?.example
-                              ?.toString()
+                                .where((m) => m.metric == _selectedMetric)
+                                .firstOrNull
+                                ?.example
+                                ?.toString()
                           : null,
                     ),
                     keyboardType: TextInputType.number,
@@ -447,9 +468,9 @@ class _HabitEditScreenState extends State<HabitEditScreen> {
                 child: Text(
                   _goalSummary(),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: cs.primary,
-                        fontStyle: FontStyle.italic,
-                      ),
+                    color: cs.primary,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
           ],

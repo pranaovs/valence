@@ -22,14 +22,14 @@ class GroupDayLink {
       id: json['id'] as String,
       groupId: (json['groupId'] ?? json['group_id']) as String,
       date: json['date'] as String,
-      completionPercentage:
-          _toInt(json['completionPercentage'] ?? json['completion_percentage']),
-      linkType:
-          (json['linkType'] ?? json['link_type'] ?? 'broken') as String,
-      freezeUsed:
-          (json['freezeUsed'] ?? json['freeze_used'] ?? false) as bool,
+      completionPercentage: _toInt(
+        json['completionPercentage'] ?? json['completion_percentage'],
+      ),
+      linkType: (json['linkType'] ?? json['link_type'] ?? 'broken') as String,
+      freezeUsed: (json['freezeUsed'] ?? json['freeze_used'] ?? false) as bool,
       createdAt: DateTime.parse(
-          (json['createdAt'] ?? json['created_at']) as String),
+        (json['createdAt'] ?? json['created_at']) as String,
+      ),
     );
   }
 

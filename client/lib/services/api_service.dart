@@ -43,18 +43,18 @@ class ApiService {
   final http.Client _client;
 
   ApiService({String? baseUrl, http.Client? client})
-      : baseUrl = baseUrl ?? ApiConfig.baseUrl,
-        _client = client ?? http.Client();
+    : baseUrl = baseUrl ?? ApiConfig.baseUrl,
+      _client = client ?? http.Client();
 
   Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      };
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
   Map<String, String> _authHeaders(String token) => {
-        ..._headers,
-        'Authorization': 'Bearer $token',
-      };
+    ..._headers,
+    'Authorization': 'Bearer $token',
+  };
 
   Future<ValenceUser> login({
     required String firebaseToken,
@@ -63,9 +63,7 @@ class ApiService {
     final response = await _client.post(
       Uri.parse('$baseUrl${ApiConfig.loginPath}'),
       headers: _authHeaders(firebaseToken),
-      body: jsonEncode({
-        if (fcmToken != null) 'fcm_token': fcmToken,
-      }),
+      body: jsonEncode({if (fcmToken != null) 'fcm_token': fcmToken}),
     );
     return ApiResponse.parseSuccess(response, ValenceUser.fromJson);
   }
@@ -390,7 +388,8 @@ class ApiService {
   }) async {
     final response = await _client.get(
       Uri.parse(
-          '$baseUrl${ApiConfig.groupsPath}/$groupId/feed?limit=$limit&offset=$offset'),
+        '$baseUrl${ApiConfig.groupsPath}/$groupId/feed?limit=$limit&offset=$offset',
+      ),
       headers: _authHeaders(token),
     );
     return ApiResponse.parseSuccessList(response, GroupFeedItem.fromJson);
@@ -414,7 +413,8 @@ class ApiService {
   }) async {
     final response = await _client.get(
       Uri.parse(
-          '$baseUrl${ApiConfig.groupsPath}/$groupId/leaderboard?period=$period'),
+        '$baseUrl${ApiConfig.groupsPath}/$groupId/leaderboard?period=$period',
+      ),
       headers: _authHeaders(token),
     );
     final body = jsonDecode(response.body) as Map<String, dynamic>;
@@ -422,8 +422,7 @@ class ApiService {
       final error = body['error'] as Map<String, dynamic>?;
       throw ApiException(
         code: error?['code'] as String? ?? 'UNKNOWN',
-        message:
-            error?['message'] as String? ?? 'Failed to load leaderboard.',
+        message: error?['message'] as String? ?? 'Failed to load leaderboard.',
       );
     }
     return body['data'] as Map<String, dynamic>;
@@ -437,8 +436,7 @@ class ApiService {
       Uri.parse('$baseUrl${ApiConfig.groupsPath}/$groupId/members'),
       headers: _authHeaders(token),
     );
-    return ApiResponse.parseSuccessList(
-        response, GroupMemberStatus.fromJson);
+    return ApiResponse.parseSuccessList(response, GroupMemberStatus.fromJson);
   }
 
   Future<FreezeResult> groupFreeze({
@@ -463,10 +461,7 @@ class ApiService {
     final response = await _client.post(
       Uri.parse('$baseUrl${ApiConfig.socialPath}/nudge'),
       headers: _authHeaders(token),
-      body: jsonEncode({
-        'receiver_id': receiverId,
-        'group_id': groupId,
-      }),
+      body: jsonEncode({'receiver_id': receiverId, 'group_id': groupId}),
     );
     return ApiResponse.parseSuccess(response, NudgeResult.fromJson);
   }
@@ -554,8 +549,7 @@ class ApiService {
     required String notificationId,
   }) async {
     final response = await _client.post(
-      Uri.parse(
-          '$baseUrl${ApiConfig.notificationsPath}/$notificationId/read'),
+      Uri.parse('$baseUrl${ApiConfig.notificationsPath}/$notificationId/read'),
       headers: _authHeaders(token),
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -563,7 +557,8 @@ class ApiService {
       final error = body['error'] as Map<String, dynamic>?;
       throw ApiException(
         code: error?['code'] as String? ?? 'UNKNOWN',
-        message: error?['message'] as String? ??
+        message:
+            error?['message'] as String? ??
             'Failed to mark notification as read.',
       );
     }
@@ -615,11 +610,9 @@ class ApiService {
       Uri.parse('$baseUrl${ApiConfig.uploadsPath}/photo'),
     );
     request.headers.addAll(_authHeaders(token));
-    request.files.add(http.MultipartFile.fromBytes(
-      'file',
-      fileBytes,
-      filename: filename,
-    ));
+    request.files.add(
+      http.MultipartFile.fromBytes('file', fileBytes, filename: filename),
+    );
     final streamedResponse = await _client.send(request);
     final response = await http.Response.fromStream(streamedResponse);
     final body = jsonDecode(response.body) as Map<String, dynamic>;
@@ -658,8 +651,7 @@ class ApiService {
       final error = body['error'] as Map<String, dynamic>?;
       throw ApiException(
         code: error?['code'] as String? ?? 'UNKNOWN',
-        message:
-            error?['message'] as String? ?? 'Failed to connect plugin.',
+        message: error?['message'] as String? ?? 'Failed to connect plugin.',
       );
     }
   }
@@ -711,8 +703,7 @@ class ApiService {
       final error = body['error'] as Map<String, dynamic>?;
       throw ApiException(
         code: error?['code'] as String? ?? 'UNKNOWN',
-        message:
-            error?['message'] as String? ?? 'Failed to disconnect plugin.',
+        message: error?['message'] as String? ?? 'Failed to disconnect plugin.',
       );
     }
   }
