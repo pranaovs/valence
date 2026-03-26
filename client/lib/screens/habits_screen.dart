@@ -6,6 +6,7 @@ import '../providers/habit_provider.dart';
 import '../providers/notification_provider.dart';
 import '../widgets/habit_card.dart';
 import '../widgets/motivation_card.dart';
+import '../widgets/nudge_prompt_sheet.dart';
 import 'habit_detail_screen.dart';
 import 'habit_edit_screen.dart';
 import 'notifications_screen.dart';
@@ -34,6 +35,13 @@ class _HabitsScreenState extends State<HabitsScreen> {
     if (result.goalStageChanged) msg.write(' | Stage changed!');
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(msg.toString())));
+
+    if (result.perfectDay) {
+      // Small delay so the snackbar shows first
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) showNudgePrompt(context);
+      });
+    }
   }
 
   @override

@@ -7,6 +7,7 @@ import '../widgets/frequency_bar_chart.dart';
 import '../widgets/habit_heatmap.dart';
 import '../widgets/habit_summary_tile.dart';
 import '../widgets/miss_reason_dialog.dart';
+import '../widgets/nudge_prompt_sheet.dart';
 import '../widgets/streak_score_chart.dart';
 import 'habit_edit_screen.dart';
 
@@ -60,6 +61,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('+${result.xpEarned} XP, +${result.sparksEarned} Sparks')),
       );
+      if (result.perfectDay) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) showNudgePrompt(context);
+        });
+      }
     }
     await _refreshHabit();
   }
