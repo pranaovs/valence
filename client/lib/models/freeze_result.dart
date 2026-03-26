@@ -13,9 +13,16 @@ class FreezeResult {
     return FreezeResult(
       message: (json['message'] as String?) ?? 'Freeze activated.',
       sparksSpent:
-          (json['sparksSpent'] ?? json['sparks_spent'] ?? 100) as int,
+          _toInt(json['sparksSpent'] ?? json['sparks_spent'], fallback: 100),
       sparksRemaining:
-          (json['sparksRemaining'] ?? json['sparks_remaining'] ?? 0) as int,
+          _toInt(json['sparksRemaining'] ?? json['sparks_remaining']),
     );
+  }
+
+  static int _toInt(dynamic value, {int fallback = 0}) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? fallback;
+    return fallback;
   }
 }

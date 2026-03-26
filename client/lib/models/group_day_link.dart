@@ -23,8 +23,7 @@ class GroupDayLink {
       groupId: (json['groupId'] ?? json['group_id']) as String,
       date: json['date'] as String,
       completionPercentage:
-          (json['completionPercentage'] ?? json['completion_percentage'] ?? 0)
-              as int,
+          _toInt(json['completionPercentage'] ?? json['completion_percentage']),
       linkType:
           (json['linkType'] ?? json['link_type'] ?? 'broken') as String,
       freezeUsed:
@@ -32,5 +31,12 @@ class GroupDayLink {
       createdAt: DateTime.parse(
           (json['createdAt'] ?? json['created_at']) as String),
     );
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
   }
 }

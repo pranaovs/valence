@@ -22,10 +22,17 @@ class ShopItem {
       id: json['id'] as String,
       name: json['name'] as String,
       category: (json['category'] as String?) ?? 'theme',
-      sparksCost: (json['sparksCost'] ?? json['sparks_cost'] ?? 0) as int,
+      sparksCost: _toInt(json['sparksCost'] ?? json['sparks_cost']),
       minRank: (json['minRank'] ?? json['min_rank'] ?? 'bronze') as String,
       owned: (json['owned'] as bool?) ?? false,
       meetsRank: (json['meets_rank'] ?? json['meetsRank'] ?? true) as bool,
     );
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
   }
 }

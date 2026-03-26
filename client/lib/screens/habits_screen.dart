@@ -78,7 +78,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
                           style: Theme.of(context).textTheme.labelMedium),
                       const Spacer(),
                       Text(
-                        user.rank[0].toUpperCase() + user.rank.substring(1),
+                        user.rank.isNotEmpty ? user.rank[0].toUpperCase() + user.rank.substring(1) : '',
                         style: Theme.of(context).textTheme.labelMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
@@ -121,6 +121,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
         child: _buildBody(habitProvider),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'habits_fab',
         onPressed: () async {
           final created = await Navigator.of(context).push<bool>(
             MaterialPageRoute(
@@ -180,12 +181,18 @@ class _HabitsScreenState extends State<HabitsScreen> {
       );
     }
 
+    final done = habitProvider.habits.where((h) => h.todayCompleted).length;
+    final total = habitProvider.habits.length;
+
     return ListView.builder(
       padding: const EdgeInsets.only(top: 0, bottom: 80),
-      itemCount: habitProvider.habits.length + 1,
+      itemCount: habitProvider.habits.length + 2, // motivation + summary + habits
       itemBuilder: (context, index) {
         if (index == 0) return const MotivationCard();
-        final habit = habitProvider.habits[index - 1];
+        if (index == 1) {
+          return _buildDailySummary(done, total);
+        }
+        final habit = habitProvider.habits[index - 2];
         return HabitCard(
           habit: habit,
           onTap: () async {
@@ -204,6 +211,37 @@ class _HabitsScreenState extends State<HabitsScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildDailySummary(int done, int total) {
+    final allDone = done == total;
+    final cs = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: total > 0 ? done / total : 0,
+                minHeight: 8,
+                backgroundColor: cs.surfaceContainerHighest,
+                color: allDone ? Colors.green : cs.primary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            '$done/$total done',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: allDone ? Colors.green : null,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }

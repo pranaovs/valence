@@ -37,12 +37,12 @@ class Group {
           (json['inviteCode'] ?? json['invite_code'] ?? '') as String,
       tier: (json['tier'] as String?) ?? 'spark',
       currentStreak:
-          (json['currentStreak'] ?? json['current_streak'] ?? 0) as int,
+          _toInt(json['currentStreak'] ?? json['current_streak']),
       longestStreak:
-          (json['longestStreak'] ?? json['longest_streak'] ?? 0) as int,
-      totalLinks: (json['totalLinks'] ?? json['total_links'] ?? 0) as int,
+          _toInt(json['longestStreak'] ?? json['longest_streak']),
+      totalLinks: _toInt(json['totalLinks'] ?? json['total_links']),
       memberCount:
-          (json['memberCount'] ?? json['member_count'] ?? 1) as int,
+          _toInt(json['memberCount'] ?? json['member_count'], fallback: 1),
       createdBy:
           (json['createdBy'] ?? json['created_by'] ?? '') as String,
       role: json['role'] as String?,
@@ -56,5 +56,12 @@ class Group {
       updatedAt: DateTime.parse(
           (json['updatedAt'] ?? json['updated_at'] ?? json['createdAt'] ?? json['created_at']) as String),
     );
+  }
+
+  static int _toInt(dynamic value, {int fallback = 0}) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? fallback;
+    return fallback;
   }
 }

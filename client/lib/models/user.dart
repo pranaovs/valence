@@ -38,8 +38,8 @@ class ValenceUser {
       email: json['email'] as String,
       name: json['name'] as String,
       avatar: json['avatar'] as String?,
-      xp: (json['xp'] as int?) ?? 0,
-      sparks: (json['sparks'] as int?) ?? 0,
+      xp: _toInt(json['xp']),
+      sparks: _toInt(json['sparks']),
       rank: (json['rank'] as String?) ?? 'bronze',
       personaType:
           (json['personaType'] ?? json['persona_type'] ?? 'general') as String,
@@ -55,5 +55,12 @@ class ValenceUser {
       updatedAt: DateTime.parse(
           (json['updatedAt'] ?? json['updated_at']) as String),
     );
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
   }
 }

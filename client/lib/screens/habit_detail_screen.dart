@@ -278,7 +278,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _infoRow('Intensity',
-                                _habit.intensity[0].toUpperCase() + _habit.intensity.substring(1)),
+                                _habit.intensity.isNotEmpty ? _habit.intensity[0].toUpperCase() + _habit.intensity.substring(1) : 'Unknown'),
                             _infoRow('Tracking', _habit.trackingMethod),
                             if (_habit.pluginId != null)
                               _infoRow('Plugin', _habit.pluginId!),

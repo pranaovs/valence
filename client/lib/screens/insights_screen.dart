@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../main.dart';
+import '../models/habit.dart';
 import '../providers/habit_provider.dart';
 import '../providers/insights_provider.dart';
 
@@ -238,7 +239,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
       case 'other':
         return 'Other';
       default:
-        return reason[0].toUpperCase() + reason.substring(1);
+        return reason.isNotEmpty ? reason[0].toUpperCase() + reason.substring(1) : reason;
     }
   }
 
@@ -272,7 +273,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
 }
 
 class _ReflectionSheet extends StatefulWidget {
-  final List<dynamic> habits;
+  final List<Habit> habits;
 
   const _ReflectionSheet({required this.habits});
 

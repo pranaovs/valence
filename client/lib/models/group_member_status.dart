@@ -28,10 +28,17 @@ class GroupMemberStatus {
       allDoneToday:
           (json['allDoneToday'] ?? json['all_done_today'] ?? false) as bool,
       habitsCompleted:
-          (json['habitsCompleted'] ?? json['habits_completed'] ?? 0) as int,
+          _toInt(json['habitsCompleted'] ?? json['habits_completed']),
       habitsTotal:
-          (json['habitsTotal'] ?? json['habits_total'] ?? 0) as int,
+          _toInt(json['habitsTotal'] ?? json['habits_total']),
       rank: (json['rank'] as String?) ?? 'bronze',
     );
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
   }
 }

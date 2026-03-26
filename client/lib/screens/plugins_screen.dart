@@ -148,7 +148,7 @@ class _PluginsScreenState extends State<PluginsScreen> {
         size: 16,
         color: color,
       ),
-      label: Text(status[0].toUpperCase() + status.substring(1)),
+      label: Text(status.isNotEmpty ? status[0].toUpperCase() + status.substring(1) : 'Unknown'),
       padding: EdgeInsets.zero,
       visualDensity: VisualDensity.compact,
     );

@@ -27,13 +27,20 @@ class HabitCompletionResult {
 
     return HabitCompletionResult(
       habit: Habit.fromJson(json['habit'] as Map<String, dynamic>),
-      xpEarned: (points['xpEarned'] ?? pe['xp'] ?? pe['xpEarned'] ?? 0) as int,
-      sparksEarned: (points['sparksEarned'] ?? pe['sparks'] ?? pe['sparksEarned'] ?? 0) as int,
+      xpEarned: _toInt(points['xpEarned'] ?? pe['xp'] ?? pe['xpEarned']),
+      sparksEarned: _toInt(points['sparksEarned'] ?? pe['sparks'] ?? pe['sparksEarned']),
       newRank: (points['newRank'] ?? json['newRank'] ?? json['new_rank']) as String?,
       perfectDay: (json['perfectDay'] ?? json['perfect_day'] ?? false) as bool,
       goalStageChanged:
           (json['goalStageChanged'] ?? json['goal_stage_changed'] ?? false)
               as bool,
     );
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
   }
 }

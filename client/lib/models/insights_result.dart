@@ -16,10 +16,18 @@ class InsightsResult {
 
     return InsightsResult(
       insights: (json['insights'] as String?) ?? '',
-      byReason: (byReasonRaw as Map<String, dynamic>)
-          .map((k, v) => MapEntry(k, (v as num).toInt())),
-      byDay: (byDayRaw as Map<String, dynamic>)
-          .map((k, v) => MapEntry(k, (v as num).toInt())),
+      byReason: _toIntMap(byReasonRaw),
+      byDay: _toIntMap(byDayRaw),
+    );
+  }
+
+  static Map<String, int> _toIntMap(dynamic raw) {
+    if (raw is! Map) return {};
+    return Map<String, int>.fromEntries(
+      raw.entries.map((e) => MapEntry(
+            e.key.toString(),
+            e.value is num ? (e.value as num).toInt() : int.tryParse(e.value.toString()) ?? 0,
+          )),
     );
   }
 }

@@ -53,9 +53,10 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
     final feed = results[3] as List<GroupFeedItem>;
 
     List<GroupMemberStatus> members = [];
-    if (detail != null && detail['members'] != null) {
+    if (detail != null && detail['members'] is List) {
       members = (detail['members'] as List)
-          .map((m) => GroupMemberStatus.fromJson(m as Map<String, dynamic>))
+          .whereType<Map<String, dynamic>>()
+          .map((m) => GroupMemberStatus.fromJson(m))
           .toList();
     }
 
@@ -81,6 +82,9 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
           PopupMenuButton<String>(
             onSelected: (value) async {
               if (value == 'leave') {
+                final groupProv = context.read<GroupProvider>();
+                final nav = Navigator.of(context);
+                final messenger = ScaffoldMessenger.of(context);
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (ctx) => AlertDialog(
@@ -101,12 +105,12 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                 );
                 if (confirmed == true && mounted) {
                   final success =
-                      await context.read<GroupProvider>().leaveGroup(_group.id);
+                      await groupProv.leaveGroup(_group.id);
                   if (mounted) {
                     if (success) {
-                      Navigator.of(context).pop();
+                      nav.pop();
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      messenger.showSnackBar(
                         const SnackBar(
                             content: Text('Failed to leave group.')),
                       );
@@ -211,14 +215,15 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
   }
 
   Widget _buildTodayStatus(ColorScheme cs) {
-    final todayStatus = _detail?['today_status'] ?? _detail?['todayStatus'];
+    final raw = _detail?['today_status'] ?? _detail?['todayStatus'];
+    final todayStatus = raw is Map<String, dynamic> ? raw : <String, dynamic>{};
     final membersDone =
-        todayStatus?['members_done'] ?? todayStatus?['membersDone'] ?? 0;
+        todayStatus['members_done'] ?? todayStatus['membersDone'] ?? 0;
     final membersTotal =
-        todayStatus?['members_total'] ?? todayStatus?['membersTotal'] ?? 0;
-    final projectedLink = todayStatus?['projected_link_type'] ??
-        todayStatus?['projectedLinkType'] ??
-        'broken';
+        todayStatus['members_total'] ?? todayStatus['membersTotal'] ?? 0;
+    final projectedLink = (todayStatus['projected_link_type'] ??
+        todayStatus['projectedLinkType'] ??
+        'broken') as String;
     final currentUserId = context.read<AuthProvider>().user?.id;
 
     return Card(
@@ -236,7 +241,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
                         .titleSmall
                         ?.copyWith(fontWeight: FontWeight.bold)),
                 const Spacer(),
-                Icon(GroupTiers.chainLinkIcon(projectedLink as String),
+                Icon(GroupTiers.chainLinkIcon(projectedLink),
                     color: GroupTiers.chainLinkColor(projectedLink),
                     size: 20),
                 const SizedBox(width: 4),

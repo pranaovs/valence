@@ -26,10 +26,10 @@ class _NudgePromptSheetState extends State<NudgePromptSheet> {
 
   Future<void> _loadData() async {
     final groupProvider = context.read<GroupProvider>();
-    await groupProvider.loadGroups();
-    final groups = groupProvider.groups;
-
     final currentUserId = context.read<AuthProvider>().user?.id;
+    await groupProvider.loadGroups();
+    if (!mounted) return;
+    final groups = groupProvider.groups;
 
     for (final group in groups) {
       final members = await groupProvider.getGroupMembers(group.id);

@@ -8,7 +8,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
-    final user = auth.user!;
+    final user = auth.user;
+    if (user == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -62,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   _StatChip(
                     icon: Icons.military_tech,
-                    label: user.rank[0].toUpperCase() + user.rank.substring(1),
+                    label: user.rank.isNotEmpty ? user.rank[0].toUpperCase() + user.rank.substring(1) : 'Unknown',
                     color: colorScheme.secondary,
                   ),
                 ],

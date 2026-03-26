@@ -63,11 +63,11 @@ class Habit {
       visibility: (json['visibility'] as String?) ?? 'full',
       isActive: (json['isActive'] ?? json['is_active'] ?? true) as bool,
       currentStreak:
-          (json['currentStreak'] ?? json['current_streak'] ?? 0) as int,
+          _toInt(json['currentStreak'] ?? json['current_streak']),
       longestStreak:
-          (json['longestStreak'] ?? json['longest_streak'] ?? 0) as int,
+          _toInt(json['longestStreak'] ?? json['longest_streak']),
       totalCompleted:
-          (json['totalCompleted'] ?? json['total_completed'] ?? 0) as int,
+          _toInt(json['totalCompleted'] ?? json['total_completed']),
       goalStage:
           (json['goalStage'] ?? json['goal_stage'] ?? 'ignition') as String,
       lastCompletedDate:
@@ -86,5 +86,12 @@ class Habit {
   static Map<String, dynamic>? _asMap(dynamic value) {
     if (value is Map<String, dynamic>) return value;
     return null;
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
   }
 }

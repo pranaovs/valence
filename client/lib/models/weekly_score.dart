@@ -35,22 +35,35 @@ class WeeklyScore {
       weekStartDate:
           (json['weekStartDate'] ?? json['week_start_date']) as String,
       contributionScore:
-          (json['contributionScore'] ?? json['contribution_score'] ?? 0)
-              as int,
+          _toInt(json['contributionScore'] ?? json['contribution_score']),
       habitsCompleted:
-          (json['habitsCompleted'] ?? json['habits_completed'] ?? 0) as int,
-      goldLinkContributions: (json['goldLinkContributions'] ??
-          json['gold_link_contributions'] ??
-          0) as int,
+          _toInt(json['habitsCompleted'] ?? json['habits_completed']),
+      goldLinkContributions: _toInt(json['goldLinkContributions'] ??
+          json['gold_link_contributions']),
       kudosReceived:
-          (json['kudosReceived'] ?? json['kudos_received'] ?? 0) as int,
+          _toInt(json['kudosReceived'] ?? json['kudos_received']),
       rankInGroup:
-          (json['rankInGroup'] ?? json['rank_in_group']) as int?,
+          _toIntNullable(json['rankInGroup'] ?? json['rank_in_group']),
       userName: (json['userName'] ?? json['user_name'] ?? '') as String,
       userAvatar:
           (json['userAvatar'] ?? json['user_avatar']) as String?,
       userRank:
           (json['userRank'] ?? json['user_rank'] ?? 'bronze') as String,
     );
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  static int? _toIntNullable(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 }

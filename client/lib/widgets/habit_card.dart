@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/habit.dart';
 
 class HabitCard extends StatelessWidget {
@@ -67,45 +68,59 @@ class HabitCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    Row(
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: cs.secondaryContainer,
-                            borderRadius: BorderRadius.circular(8),
+                        // Streak badge
+                        if (habit.currentStreak > 0)
+                          _badge(
+                            context,
+                            icon: Icons.local_fire_department,
+                            label: '${habit.currentStreak}d',
+                            color: Colors.deepOrange,
                           ),
-                          child: Text(
-                            _goalStageLabel(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(color: cs.onSecondaryContainer),
-                          ),
+                        // Goal stage badge
+                        _badge(
+                          context,
+                          label: _goalStageLabel(),
+                          bgColor: cs.secondaryContainer,
+                          textColor: cs.onSecondaryContainer,
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: intensityCol.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            habit.intensity[0].toUpperCase() + habit.intensity.substring(1),
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(color: intensityCol),
-                          ),
+                        // Intensity badge
+                        _badge(
+                          context,
+                          label: habit.intensity[0].toUpperCase() +
+                              habit.intensity.substring(1),
+                          color: intensityCol,
                         ),
+                        // Plugin verification badge
+                        if (habit.trackingMethod == 'plugin' &&
+                            habit.pluginId != null)
+                          _badge(
+                            context,
+                            icon: Icons.verified,
+                            label: _pluginLabel(habit.pluginId!),
+                            color: cs.tertiary,
+                          ),
                       ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
+              // Deep-link redirect button
+              if (habit.redirectUrl != null &&
+                  habit.redirectUrl!.isNotEmpty &&
+                  !habit.todayCompleted)
+                IconButton(
+                  onPressed: () => _launchRedirect(habit.redirectUrl!),
+                  icon: const Icon(Icons.open_in_new, size: 20),
+                  tooltip: 'Open in app',
+                  padding: EdgeInsets.zero,
+                  constraints:
+                      const BoxConstraints(minWidth: 36, minHeight: 36),
+                ),
               IconButton.filled(
                 onPressed: habit.todayCompleted ? null : onComplete,
                 style: IconButton.styleFrom(
@@ -126,5 +141,61 @@ class HabitCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _badge(
+    BuildContext context, {
+    IconData? icon,
+    required String label,
+    Color? color,
+    Color? bgColor,
+    Color? textColor,
+  }) {
+    final effectiveColor = textColor ?? color;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: bgColor ?? color?.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 12, color: effectiveColor),
+            const SizedBox(width: 3),
+          ],
+          Text(
+            label,
+            style: Theme.of(context)
+                .textTheme
+                .labelSmall
+                ?.copyWith(color: effectiveColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _pluginLabel(String pluginId) {
+    return switch (pluginId) {
+      'leetcode' => 'LeetCode',
+      'github' => 'GitHub',
+      'wakapi' => 'Wakapi',
+      'google_fit' => 'Google Fit',
+      'duolingo' => 'Duolingo',
+      'screen_time' => 'Screen Time',
+      'strava' => 'Strava',
+      'chess_com' => 'Chess.com',
+      'todoist' => 'Todoist',
+      _ => pluginId,
+    };
+  }
+
+  Future<void> _launchRedirect(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri != null) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 }

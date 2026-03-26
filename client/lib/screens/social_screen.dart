@@ -98,6 +98,7 @@ class _SocialScreenState extends State<SocialScreen> {
               title: const Text('Create a Group'),
               onTap: () async {
                 Navigator.of(ctx).pop();
+                final groupProv = context.read<GroupProvider>();
                 final created = await Navigator.of(context).push<bool>(
                   MaterialPageRoute(
                     builder: (_) => const GroupCreateScreen(),
@@ -105,7 +106,7 @@ class _SocialScreenState extends State<SocialScreen> {
                   ),
                 );
                 if (created == true) {
-                  context.read<GroupProvider>().loadGroups();
+                  groupProv.loadGroups();
                 }
               },
             ),
@@ -147,6 +148,7 @@ class _SocialScreenState extends State<SocialScreen> {
         child: _buildBody(groupProvider),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'social_fab',
         onPressed: _showAddOptions,
         child: const Icon(Icons.group_add),
       ),

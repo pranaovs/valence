@@ -13,6 +13,8 @@ import 'screens/insights_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/plugins_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/shop_screen.dart';
 import 'screens/social_screen.dart';
 
 void main() async {
@@ -178,10 +180,36 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
               title: const Text('Plugins'),
               subtitle: const Text('Connect external services'),
               onTap: () {
-                Navigator.of(context).pop(); // close drawer
+                Navigator.of(context).pop();
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => const PluginsScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.storefront),
+              title: const Text('Shop'),
+              subtitle: const Text('Themes, flames, and more'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const ShopScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              subtitle: const Text('Persona, notifications'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SettingsScreen(),
                   ),
                 );
               },

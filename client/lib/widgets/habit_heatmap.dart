@@ -41,12 +41,24 @@ class HabitHeatmapWidget extends StatelessWidget {
 
     final selectedMap = <DateTime, num>{};
     for (final log in logs) {
-      final date = DateTime.parse(log.date);
+      final date = DateTime.tryParse(log.date);
+      if (date == null) continue;
       final normalized = DateTime(date.year, date.month, date.day);
       selectedMap[normalized] = _ratioToLevel(_logRatio(log));
     }
 
-    final sorted = logs.map((l) => DateTime.parse(l.date)).toList()..sort();
+    if (selectedMap.isEmpty) {
+      return const SizedBox(
+        height: 120,
+        child: Center(child: Text('No data yet')),
+      );
+    }
+
+    final sorted = logs
+        .map((l) => DateTime.tryParse(l.date))
+        .whereType<DateTime>()
+        .toList()
+      ..sort();
     final startDate = DateTime(
         sorted.first.year, sorted.first.month, sorted.first.day);
     final endDate = DateTime(
