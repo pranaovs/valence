@@ -72,20 +72,30 @@ class HabitHeatmapWidget extends StatelessWidget {
       selectedMap.putIfAbsent(normalized, () => 0);
     }
 
-    return SizedBox(
-      height: 140,
-      child: HeatmapCalendar<num>(
-        startDate: startDate,
-        endedDate: endDate,
-        selectedMap: selectedMap,
-        colorMap: {
-          0: cs.onSurface.withValues(alpha: 0.05),
-          1: cs.primary.withValues(alpha: 0.2),
-          2: cs.primary.withValues(alpha: 0.5),
-          3: cs.primary.withValues(alpha: 0.8),
-        },
-        cellSize: const Size.square(14),
-        cellSpaceBetween: 2,
+    final cellTotal = 14.0 + 2.0; // cellSize + spacing
+    final rows = 7; // days in a week
+    final computedHeight = (rows * cellTotal) + 2; // +2 for rounding
+
+    return ClipRect(
+      child: SizedBox(
+        height: computedHeight,
+        child: HeatmapCalendar<num>(
+          startDate: startDate,
+          endedDate: endDate,
+          selectedMap: selectedMap,
+          style: HeatmapCalendarStyle.defaults(
+            cellBackgroundColor: cs.onSurface.withValues(alpha: 0.08),
+            cellRadius: BorderRadius.circular(3),
+          ),
+          colorMap: {
+            0: cs.onSurface.withValues(alpha: 0.08),
+            1: cs.primary.withValues(alpha: 0.25),
+            2: cs.primary.withValues(alpha: 0.5),
+            3: cs.primary.withValues(alpha: 0.8),
+          },
+          cellSize: const Size.square(14),
+          cellSpaceBetween: 2,
+        ),
       ),
     );
   }

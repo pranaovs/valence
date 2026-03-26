@@ -258,7 +258,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                   _sectionTitle(context, 'Heatmap'),
                   _logsLoading
                       ? const SizedBox(
-                          height: 140,
+                          height: 114,
                           child:
                               Center(child: CircularProgressIndicator()))
                       : Padding(
