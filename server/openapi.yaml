@@ -1,0 +1,1414 @@
+openapi: 3.0.3
+info:
+  title: Valance API
+  version: 2.0.0
+  description: |
+    Social habit-tracking backend. Base URL: http://localhost:3000/api/v1
+
+    **Auth:** Bearer token (Firebase JWT) in Authorization header. Dev mode: X-Dev-User-Id header bypasses auth.
+
+    **Response format:** `{ status: "ok", data: ... }` or `{ status: "error", error: { code, message } }`
+
+    **Dates:** YYYY-MM-DD strings. Timestamps: ISO 8601.
+
+    **Constants:**
+    - XP/Sparks: light=5, moderate=10, intense=20, perfect_day=25, welcome=50
+    - Streak milestones: 7d=+30, 30d=+100, 100d=+500
+    - Ranks: bronze(0), silver(500), gold(2000), platinum(5000), diamond(15000)
+    - Group tiers: spark(0), ember(7), flame(21), blaze(66)
+    - Group chain: 100%=gold, ≥75%=silver, <75%=broken
+    - Max habits: 7 active per user
+    - Freeze: 100 Sparks, 1/group/day
+    - Nudge limit: 5/day, 1/pair/day
+
+servers:
+  - url: http://localhost:3000/api/v1
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Auth
+  - name: Users
+  - name: Habits
+  - name: Groups
+  - name: Social
+  - name: Shop
+  - name: Plugins
+  - name: Insights
+  - name: Notifications
+  - name: Uploads
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register new user
+      description: Verify Firebase token, create user in DB. Awards 50 XP + 50 Sparks welcome bonus.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+                  description: Firebase ID token
+            example:
+              token: "eyJhbGciOi..."
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '409':
+          description: User already exists
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login existing user
+      description: Verify Firebase token, return existing user or 404.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+            example:
+              token: "eyJhbGciOi..."
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: User not registered
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh session
+      description: Verify Firebase token, return fresh user data.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: User data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current user
+      responses:
+        '200':
+          description: Current user with all fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                status: ok
+                data:
+                  id: "cf8381f0-3a96-4f28-ac15-f9d7b4a9e1bb"
+                  name: "Alice"
+                  email: "alice@test.dev"
+                  xp: 710
+                  sparks: 560
+                  rank: "silver"
+                  personaType: "achiever"
+                  equipped:
+                    theme: "nocturnal"
+                    flame: "default"
+                    animation: "default"
+                    card_style: "default"
+                    font: "default"
+                    pattern: "none"
+                    icon: "default"
+                    profile_frame: null
+                    profile_banner: null
+                    party_badge: null
+                    celebration: "default"
+                    milestone_card: "default"
+                    sound: "default"
+                    freeze_animation: "default"
+                    summary_style: "default"
+                    party_entrance: "default"
+                    name_color: null
+                  notificationPreferences:
+                    morning: true
+                    nudges: true
+                    memes: true
+                    reflection: true
+                  timezone: "Asia/Kolkata"
+                  fcmToken: null
+        '401':
+          description: Not authenticated
+
+  /users/me/settings:
+    patch:
+      tags: [Users]
+      summary: Update user settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                timezone:
+                  type: string
+                  example: "Asia/Kolkata"
+                persona_type:
+                  type: string
+                  enum: [socialiser, achiever, general]
+                notification_preferences:
+                  type: object
+                  properties:
+                    morning: { type: boolean }
+                    nudges: { type: boolean }
+                    memes: { type: boolean }
+                    reflection: { type: boolean }
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /users/me/equip:
+    patch:
+      tags: [Users]
+      summary: Equip cosmetics
+      description: Update equipped items. User must own the item (checked against user_items table). Defaults (nocturnal, default, none) don't need purchase.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EquippedCosmetics'
+            example:
+              theme: "neon-terminal"
+              flame: "flame-blue"
+      responses:
+        '200':
+          description: Updated user
+        '403':
+          description: Item not owned
+
+  /users/{id}/profile:
+    get:
+      tags: [Users]
+      summary: Get public profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Public profile (id, name, avatar, xp, rank, equipped, personaType, createdAt)
+        '404':
+          description: User not found
+
+  /habits:
+    post:
+      tags: [Habits]
+      summary: Create habit
+      description: Max 7 active habits per user. Supports custom frequency rules.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                intensity:
+                  type: string
+                  enum: [light, moderate, intense]
+                  default: moderate
+                tracking_method:
+                  type: string
+                  enum: [plugin, manual]
+                  default: manual
+                plugin_id:
+                  type: string
+                  description: Plugin ID if tracking_method=plugin
+                redirect_url:
+                  type: string
+                  description: Deep-link URL to open target app
+                visibility:
+                  type: string
+                  enum: [full, minimal]
+                  default: full
+                frequency_rule:
+                  $ref: '#/components/schemas/FrequencyRule'
+            examples:
+              daily:
+                summary: Daily habit (default)
+                value:
+                  name: "Morning meditation"
+                  intensity: "moderate"
+                  frequency_rule: { type: "daily" }
+              rolling:
+                summary: 3 times in 5 days
+                value:
+                  name: "Read a book"
+                  intensity: "light"
+                  frequency_rule: { type: "rolling_window", target: 3, window: 5 }
+              weekly:
+                summary: Twice per week
+                value:
+                  name: "Go to gym"
+                  intensity: "intense"
+                  frequency_rule: { type: "per_week", target: 2 }
+              monthly:
+                summary: 10 per month
+                value:
+                  name: "Cook dinner"
+                  intensity: "moderate"
+                  frequency_rule: { type: "per_month", target: 10 }
+              plugin:
+                summary: Plugin-tracked habit
+                value:
+                  name: "Solve 1 LeetCode"
+                  intensity: "moderate"
+                  tracking_method: "plugin"
+                  plugin_id: "leetcode"
+                  redirect_url: "https://leetcode.com/problemset/"
+      responses:
+        '201':
+          description: Habit created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HabitResponse'
+        '400':
+          description: Validation error or max 7 habits reached
+
+    get:
+      tags: [Habits]
+      summary: List active habits
+      description: Returns all active habits with today's completion status AND frequency goal status.
+      responses:
+        '200':
+          description: Array of habits with frequencyStatus
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  - id: "ef548e8c-..."
+                    name: "Go to gym"
+                    intensity: "intense"
+                    frequencyRule: { type: "per_week", target: 2 }
+                    currentStreak: 3
+                    goalStage: "ignition"
+                    completedToday: true
+                    frequencyStatus:
+                      goalMet: false
+                      completedCount: 1
+                      requiredCount: 2
+                      periodStart: "2026-03-23"
+                      periodEnd: "2026-03-29"
+                      dueToday: true
+
+  /habits/{id}:
+    patch:
+      tags: [Habits]
+      summary: Update habit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                intensity: { type: string, enum: [light, moderate, intense] }
+                redirect_url: { type: string, nullable: true }
+                visibility: { type: string, enum: [full, minimal] }
+                frequency_rule:
+                  $ref: '#/components/schemas/FrequencyRule'
+      responses:
+        '200':
+          description: Updated habit
+        '404':
+          description: Not found or not owned
+
+    delete:
+      tags: [Habits]
+      summary: Archive habit
+      description: Sets is_active=false. Streak freezes. Excluded from group chain calculation.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Archived
+
+  /habits/{id}/complete:
+    post:
+      tags: [Habits]
+      summary: Complete habit
+      description: |
+        Marks habit as completed for today. Side effects:
+        - Streak incremented (if consecutive day)
+        - XP + Sparks awarded (light=5, moderate=10, intense=20)
+        - Perfect day bonus (+25) if all frequency goals met
+        - Goal stage checked (3→10→21→66 days)
+        - Streak milestones checked (7/30/100 days)
+        - Feed items created for group members
+        - Status+Norm feed items on milestones
+        - Rank promotion if XP threshold crossed
+        - WeeklyScore updated
+        - GroupMember lastActiveDate updated
+
+        Idempotent — calling twice on same day returns same result.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verification_source:
+                  type: string
+                  enum: [manual, photo, leetcode, github, wakapi, google_fit, duolingo, strava, chess_com, todoist, screen_time]
+                  default: manual
+                proof_url:
+                  type: string
+                  description: URL of proof photo (from /uploads/photo)
+      responses:
+        '200':
+          description: Completion result
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  habit:
+                    id: "ef548e8c-..."
+                    currentStreak: 5
+                    goalStage: "ignition"
+                  points:
+                    xpEarned: 10
+                    sparksEarned: 10
+                    newRank: null
+                  perfectDay: true
+                  milestoneReward: null
+                  goalStageChanged: false
+
+  /habits/{id}/miss:
+    post:
+      tags: [Habits]
+      summary: Log a miss
+      description: Records why the user missed. Streak PAUSES (never resets). LLM parses reason text for pattern detection.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason_category]
+              properties:
+                reason_category:
+                  type: string
+                  enum: [sick, busy, forgot, no_energy, other]
+                reason_text:
+                  type: string
+                  description: Optional free-text explanation
+            example:
+              reason_category: "no_energy"
+              reason_text: "long day at work"
+      responses:
+        '200':
+          description: Miss logged with supportive message
+
+  /habits/{id}/logs:
+    get:
+      tags: [Habits]
+      summary: Get habit logs (for heatmap)
+      description: |
+        Returns daily logs for the habit. Each log includes:
+        - completed (boolean)
+        - verificationSource (manual/plugin name)
+        - pluginMetrics (raw data from the plugin — steps, games, coding minutes, etc.)
+        - reflectionDifficulty (1-5) and reflectionText
+
+        **For the heatmap:** The frontend calculates the progress ratio per day:
+        `ratio = pluginMetrics[pluginGoal.metric] / pluginGoal.value`
+
+        Color mapping (matches existing Flutter heatmap):
+        - ratio = 0 → uncomplete (0.2 alpha)
+        - ratio < 0.5 → partiallyCompleted (0.3 alpha)
+        - ratio < 1.0 → autoComplete (0.5 alpha)
+        - ratio = 1.0 → complete (full color)
+        - ratio > 1.0 → overfulfil (darkened)
+
+        For manual habits without pluginGoal: completed=true → 1.0, false → 0.0
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: range
+          in: query
+          schema: { type: string, enum: [week, month], default: week }
+      responses:
+        '200':
+          description: Array of daily logs with plugin metrics
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  - id: "abc..."
+                    habitId: "ef548..."
+                    date: "2026-03-25"
+                    completed: true
+                    verificationSource: "chess_com"
+                    pluginMetrics:
+                      games_today: 4
+                      latest_game_type: "rapid"
+                      latest_result: "resigned"
+                    reflectionDifficulty: 3
+                    reflectionText: "felt good"
+                    completedAt: "2026-03-25T14:30:00Z"
+                  - id: "def..."
+                    habitId: "ef548..."
+                    date: "2026-03-24"
+                    completed: false
+                    verificationSource: "chess_com"
+                    pluginMetrics:
+                      games_today: 1
+                      latest_game_type: "blitz"
+                    reflectionDifficulty: null
+                    reflectionText: null
+                    completedAt: null
+
+  /groups:
+    get:
+      tags: [Groups]
+      summary: List user's groups
+      description: Returns all groups the authenticated user belongs to, with their role, member count, tier, and streak info.
+      responses:
+        '200':
+          description: Array of groups
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  - id: "9b21f6ae-..."
+                    name: "Morning Warriors"
+                    inviteCode: "j8gjVF_H"
+                    tier: "ember"
+                    currentStreak: 12
+                    longestStreak: 14
+                    totalLinks: 18
+                    role: "admin"
+                    joinedAt: "2026-03-15T10:00:00Z"
+                    memberCount: 5
+
+    post:
+      tags: [Groups]
+      summary: Create group
+      description: Creates group with auto-generated invite code (8 chars). Creator becomes admin. Size 3-7 members.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, maxLength: 100 }
+            example:
+              name: "Morning Warriors"
+      responses:
+        '201':
+          description: Group created with invite code
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  group:
+                    id: "9b21f6ae-..."
+                    name: "Morning Warriors"
+                    inviteCode: "j8gjVF_H"
+                    tier: "spark"
+                    currentStreak: 0
+                  membership:
+                    role: "admin"
+
+  /groups/{id}:
+    get:
+      tags: [Groups]
+      summary: Get group detail
+      description: Returns group info, today's member completion status (respects minimal visibility), chain data.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Group detail
+        '403':
+          description: Not a member
+
+  /groups/{id}/join:
+    post:
+      tags: [Groups]
+      summary: Join group
+      description: Join via invite code. Max 7 members.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [invite_code]
+              properties:
+                invite_code: { type: string }
+      responses:
+        '201':
+          description: Joined
+        '400':
+          description: Wrong invite code or group full
+
+  /groups/{id}/leave:
+    delete:
+      tags: [Groups]
+      summary: Leave group
+      description: If admin leaves, transfers admin to next oldest member.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Left group
+
+  /groups/{id}/feed:
+    get:
+      tags: [Groups]
+      summary: Group activity feed
+      description: Completions, kudos, nudges, chain links, tier changes, Status+Norm messages. Chronological.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+      responses:
+        '200':
+          description: Feed items with actor info
+
+  /groups/{id}/streak:
+    get:
+      tags: [Groups]
+      summary: Chain link history
+      description: Last 30 days of gold/silver/broken links. Current streak, longest, total links.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Chain link data
+
+  /groups/{id}/leaderboard:
+    get:
+      tags: [Groups]
+      summary: Intra-group leaderboard
+      description: Weekly contribution score = habits completed + gold link contributions + kudos received. Resets every Monday.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: period
+          in: query
+          schema: { type: string, enum: [week, month], default: week }
+      responses:
+        '200':
+          description: Ranked members
+
+  /groups/{id}/members:
+    get:
+      tags: [Groups]
+      summary: List group members
+      description: All members with today-completion status. Respects minimal visibility (only done/not done, no habit names).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Member list
+
+  /groups/{id}/freeze:
+    post:
+      tags: [Groups]
+      summary: Altruistic streak freeze
+      description: Costs 100 Sparks from requesting user. Protects group chain for today. Max 1 per group per day.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Freeze applied
+        '400':
+          description: Insufficient Sparks or already frozen today
+
+  /social/nudge:
+    post:
+      tags: [Social]
+      summary: Send nudge
+      description: |
+        CONDITIONAL: Sender must complete ALL their active habits today before nudging.
+        LLM generates personalized message using receiver's habits, streaks, miss patterns, reflections, time of day.
+        If receiver has memes enabled, includes a Giphy GIF in response data.
+        Rate limited: 5 nudges/day, 1 per sender→receiver pair/day.
+        Creates feed item + notification + FCM push.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [receiver_id, group_id]
+              properties:
+                receiver_id: { type: string, format: uuid }
+                group_id: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Nudge sent with LLM message
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  nudge:
+                    id: "abc..."
+                    senderId: "..."
+                    receiverId: "..."
+                    llmGeneratedMessage: "Riya, it's Thursday and you mentioned work drains you..."
+                  message: "Riya, it's Thursday..."
+                  memeGif:
+                    url: "https://media.giphy.com/.../full.gif"
+                    preview: "https://media.giphy.com/.../small.gif"
+        '400':
+          description: Sender hasn't completed all habits
+        '429':
+          description: Rate limit exceeded
+
+  /social/kudos:
+    post:
+      tags: [Social]
+      summary: Send kudos
+      description: Quick positive reaction. Updates receiver's weekly contribution score. Creates feed item + notification + FCM push.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [receiver_id, group_id]
+              properties:
+                receiver_id: { type: string, format: uuid }
+                group_id: { type: string, format: uuid }
+                habit_log_id:
+                  type: string
+                  format: uuid
+                  description: Optional — which habit completion to celebrate
+      responses:
+        '200':
+          description: Kudos sent
+
+  /shop/items:
+    get:
+      tags: [Shop]
+      summary: List shop items
+      description: Returns all items with `owned` (boolean) and `meets_rank` (boolean) per item for the authenticated user.
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [theme, flame, animation, card_style, font, pattern, icon, profile_frame, profile_banner, name_color, celebration, milestone_card, party_badge, sound, freeze_animation, summary_style, party_entrance, qol, seasonal]
+      responses:
+        '200':
+          description: Shop items
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  - id: "neon-terminal"
+                    name: "Neon Terminal"
+                    category: "theme"
+                    sparksCost: 200
+                    minRank: "silver"
+                    owned: false
+                    meets_rank: true
+
+  /shop/purchase/{itemId}:
+    post:
+      tags: [Shop]
+      summary: Purchase item
+      description: |
+        Validates: sufficient Sparks, meets min rank, not already owned, seasonal availability.
+        Deducts Sparks atomically.
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Purchased
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  item: { id: "flame-blue", name: "Blue Flame", sparksCost: 50 }
+                  remaining_sparks: 510
+        '400':
+          description: Insufficient Sparks or rank too low
+        '409':
+          description: Already owned
+
+  /plugins:
+    get:
+      tags: [Plugins]
+      summary: List all plugins
+      description: |
+        Returns all 9 available plugins with connection status for current user.
+        Plugins: leetcode, github, wakapi, google_fit, duolingo, screen_time, strava, chess_com, todoist
+      responses:
+        '200':
+          description: Plugin list
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  - id: "leetcode"
+                    name: "LeetCode"
+                    description: "Track daily LeetCode problem solving"
+                    category: "coding"
+                    credentialFields: ["username"]
+                    connected: true
+                    status: "active"
+                    lastSyncedAt: "2026-03-25T22:03:10Z"
+                  - id: "strava"
+                    name: "Strava"
+                    category: "fitness"
+                    credentialFields: ["access_token", "refresh_token"]
+                    connected: false
+                    status: null
+
+  /plugins/{id}/connect:
+    post:
+      tags: [Plugins]
+      summary: Connect plugin
+      description: |
+        Validates credentials with the external service. Stores connection.
+        Credential fields vary per plugin:
+        - leetcode: { username }
+        - github: { username }
+        - wakapi: { api_key, base_url }
+        - google_fit: { access_token, refresh_token }
+        - duolingo: { username }
+        - strava: { access_token, refresh_token }
+        - chess_com: { username }
+        - todoist: { api_key }
+        - screen_time: { api_key }
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, enum: [leetcode, github, wakapi, google_fit, duolingo, screen_time, strava, chess_com, todoist] }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [credentials]
+              properties:
+                credentials:
+                  type: object
+                  description: Key-value credentials (varies per plugin)
+            examples:
+              leetcode:
+                value: { credentials: { username: "tourist" } }
+              wakapi:
+                value: { credentials: { api_key: "waka_xxx", base_url: "https://wakapi.dev" } }
+              strava:
+                value: { credentials: { access_token: "xxx", refresh_token: "yyy" } }
+      responses:
+        '201':
+          description: Connected
+        '400':
+          description: Invalid credentials
+
+  /plugins/{id}/status:
+    get:
+      tags: [Plugins]
+      summary: Plugin connection status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Connection status, last synced, errors
+
+  /plugins/{id}:
+    delete:
+      tags: [Plugins]
+      summary: Disconnect plugin
+      description: Removes stored credentials. Poller will stop checking this plugin for the user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, enum: [leetcode, github, wakapi, google_fit, duolingo, screen_time, strava, chess_com, todoist] }
+      responses:
+        '200':
+          description: Disconnected
+          content:
+            application/json:
+              example:
+                status: ok
+                data: { message: "chess_com disconnected", pluginId: "chess_com" }
+        '404':
+          description: Plugin not connected
+
+  /plugins/{id}/metrics:
+    get:
+      tags: [Plugins]
+      summary: Available metrics for goal setting
+      description: |
+        Returns the metrics a plugin can track, so the frontend can show a goal picker.
+        Each metric has a name, label, unit, and example value.
+        User picks a metric + operator (gte/lte/eq) + value to create a plugin_goal on their habit.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Available metrics
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  pluginId: "google_fit"
+                  metrics:
+                    - metric: "steps"
+                      label: "Steps"
+                      unit: "count"
+                      example: 10000
+                    - metric: "activity_minutes"
+                      label: "Exercise"
+                      unit: "minutes"
+                      example: 30
+
+  /oauth/google-fit/authorize:
+    get:
+      tags: [Plugins]
+      summary: Start Google Fit OAuth flow
+      description: Redirects to Google consent screen. Pass user_id as query param (or X-Dev-User-Id header). After consent, redirects to callback which stores tokens.
+      security: []
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '302':
+          description: Redirect to Google consent screen
+
+  /oauth/strava/authorize:
+    get:
+      tags: [Plugins]
+      summary: Start Strava OAuth flow
+      description: Same flow as Google Fit. Redirects to Strava consent screen.
+      security: []
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '302':
+          description: Redirect to Strava consent screen
+
+  /plugins/screen_time/report:
+    post:
+      tags: [Plugins]
+      summary: Report screen time data from device
+      description: |
+        **This is a client-reported plugin.** Unlike other plugins where the backend polls an external API,
+        screen time data comes FROM the Flutter app because it reads the OS directly.
+
+        The Flutter app should:
+        1. Check if screen time permission is granted
+           - Android: `UsageStatsManager` — needs "Usage access" permission in Settings → Apps → Special access
+           - iOS: `DeviceActivityReport` / Screen Time API — needs "Share Across Devices" enabled
+        2. If not granted → prompt user to open system settings and grant it
+        3. Once granted → read total screen time and per-app usage periodically (on app open or background task)
+        4. POST the data to this endpoint
+
+        The backend then:
+        - Stores raw metrics in habitLog.pluginMetrics (for heatmap partial progress)
+        - Checks against the habit's pluginGoal (e.g., screen_minutes lte 120 = under 2 hours)
+        - Auto-completes the habit if goal met
+        - Awards XP/Sparks
+
+        **Note:** Screen time goals typically use `lte` (less than or equal) — user succeeds by using phone LESS.
+
+        **Flutter packages to use:**
+        - Android: `app_usage` or `usage_stats`
+        - iOS: `device_activity` or `screen_time_api`
+
+        **No credentials needed.** credentialFields is empty for screen_time.
+        The user just creates a habit with plugin_id="screen_time" and a pluginGoal.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [screen_minutes]
+              properties:
+                screen_minutes:
+                  type: number
+                  description: Total screen time in minutes for the day
+                app_usage:
+                  type: object
+                  nullable: true
+                  description: Per-app breakdown in minutes (optional)
+                  additionalProperties: { type: number }
+                  example: { "Instagram": 45, "YouTube": 30, "Twitter": 15 }
+                date:
+                  type: string
+                  format: date
+                  description: "Date to report for (defaults to today). Format: YYYY-MM-DD"
+            example:
+              screen_minutes: 95
+              app_usage: { "Instagram": 30, "YouTube": 25, "Reddit": 20, "Chrome": 20 }
+      responses:
+        '200':
+          description: Screen time reported and habits evaluated
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  reported: true
+                  date: "2026-03-25"
+                  screen_minutes: 95
+                  habits_evaluated: 1
+        '400':
+          description: Missing screen_minutes or no screen time habit found
+
+  /insights/reflections:
+    post:
+      tags: [Insights]
+      summary: Submit daily reflections
+      description: 1-5 difficulty rating per habit + optional text. Updates today's habitLogs. Feeds LLM nudge engine.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              items:
+                type: object
+                required: [habit_id, difficulty]
+                properties:
+                  habit_id: { type: string, format: uuid }
+                  difficulty: { type: integer, minimum: 1, maximum: 5 }
+                  text: { type: string }
+            example:
+              - habit_id: "ef548e8c-..."
+                difficulty: 3
+                text: "felt good today"
+              - habit_id: "abc123-..."
+                difficulty: 5
+      responses:
+        '200':
+          description: Reflections saved
+
+  /insights:
+    get:
+      tags: [Insights]
+      summary: Failure pattern analysis
+      description: LLM analyzes miss logs — groups by reason category, identifies day-of-week patterns, generates insights.
+      responses:
+        '200':
+          description: LLM-generated insights
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  insights: "You tend to miss on Thursdays (60% miss rate). Most common reason: no_energy..."
+                  patterns:
+                    by_reason:
+                      no_energy: 5
+                      busy: 3
+                    by_day:
+                      Thursday: 4
+                      Friday: 2
+
+  /insights/motivation:
+    get:
+      tags: [Insights]
+      summary: Persona-driven motivational message
+      description: |
+        LLM generates a personalized message for the home screen based on persona type:
+        - socialiser → group/friend focused
+        - achiever → stats/streak/rank focused
+        - general → balanced
+      responses:
+        '200':
+          description: Motivational message
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  message: "Day 15. 780 XP. You're 61% to Gold rank."
+                  persona: "achiever"
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: List notifications
+      description: "Types: morning_activation, friend_nudge, preemptive_warning, reflection_prompt, kudos_received, streak_milestone, goal_milestone, rank_promotion, weekly_summary"
+      parameters:
+        - name: unread_only
+          in: query
+          schema: { type: boolean, default: false }
+      responses:
+        '200':
+          description: Notification list
+
+  /notifications/{id}/read:
+    post:
+      tags: [Notifications]
+      summary: Mark notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Marked as read
+
+  /uploads/photo:
+    post:
+      tags: [Uploads]
+      summary: Upload proof photo
+      description: Upload image for habit completion proof. Returns URL. Max 10MB. JPEG/PNG/WebP/GIF.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: File uploaded
+          content:
+            application/json:
+              example:
+                status: ok
+                data:
+                  url: "http://localhost:3000/uploads/abc123.jpg"
+                  filename: "abc123.jpg"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Firebase JWT token. Dev mode alternative — X-Dev-User-Id header.
+
+  schemas:
+    FrequencyRule:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [daily, rolling_window, per_week, per_month]
+          description: |
+            - daily: complete every day
+            - rolling_window: X times in last Y days (requires target + window)
+            - per_week: X times per week (requires target)
+            - per_month: X times per month (requires target)
+        target:
+          type: integer
+          minimum: 1
+          description: How many completions required (for rolling_window, per_week, per_month)
+        window:
+          type: integer
+          minimum: 1
+          description: Window size in days (only for rolling_window)
+      examples:
+        - { type: "daily" }
+        - { type: "rolling_window", target: 3, window: 5 }
+        - { type: "per_week", target: 2 }
+        - { type: "per_month", target: 10 }
+
+    FrequencyStatus:
+      type: object
+      properties:
+        goalMet: { type: boolean, description: "Is the frequency goal satisfied for current period?" }
+        completedCount: { type: integer, description: "Completions so far in current period" }
+        requiredCount: { type: integer, description: "Completions required" }
+        periodStart: { type: string, format: date }
+        periodEnd: { type: string, format: date }
+        dueToday: { type: boolean, description: "Does this habit need action today? False if goal already met." }
+
+    EquippedCosmetics:
+      type: object
+      properties:
+        theme: { type: string }
+        flame: { type: string }
+        animation: { type: string }
+        card_style: { type: string }
+        font: { type: string }
+        pattern: { type: string }
+        icon: { type: string }
+        profile_frame: { type: string, nullable: true }
+        profile_banner: { type: string, nullable: true }
+        party_badge: { type: string, nullable: true }
+        celebration: { type: string }
+        milestone_card: { type: string }
+        sound: { type: string }
+        freeze_animation: { type: string }
+        summary_style: { type: string }
+        party_entrance: { type: string }
+        name_color: { type: string, nullable: true }
+
+    NotificationPreferences:
+      type: object
+      properties:
+        morning: { type: boolean }
+        nudges: { type: boolean }
+        memes: { type: boolean, description: "Enable meme GIFs in notifications (via Giphy)" }
+        reflection: { type: boolean }
+
+    UserResponse:
+      type: object
+      properties:
+        status: { type: string }
+        data:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            firebaseUid: { type: string }
+            email: { type: string }
+            name: { type: string }
+            avatar: { type: string, nullable: true }
+            xp: { type: integer }
+            sparks: { type: integer }
+            rank: { type: string, enum: [bronze, silver, gold, platinum, diamond] }
+            personaType: { type: string, enum: [socialiser, achiever, general] }
+            equipped: { $ref: '#/components/schemas/EquippedCosmetics' }
+            notificationPreferences: { $ref: '#/components/schemas/NotificationPreferences' }
+            timezone: { type: string }
+            fcmToken: { type: string, nullable: true }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+
+    HabitResponse:
+      type: object
+      properties:
+        status: { type: string }
+        data:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            userId: { type: string, format: uuid }
+            name: { type: string }
+            intensity: { type: string, enum: [light, moderate, intense] }
+            trackingMethod: { type: string, enum: [plugin, manual] }
+            pluginId: { type: string, nullable: true }
+            pluginGoal:
+              $ref: '#/components/schemas/PluginGoal'
+            redirectUrl: { type: string, nullable: true }
+            visibility: { type: string, enum: [full, minimal] }
+            frequencyRule: { $ref: '#/components/schemas/FrequencyRule' }
+            isActive: { type: boolean }
+            currentStreak: { type: integer }
+            longestStreak: { type: integer }
+            totalCompleted: { type: integer }
+            goalStage: { type: string, enum: [ignition, foundation, momentum, formed] }
+            lastCompletedDate: { type: string, format: date, nullable: true }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+            completedToday: { type: boolean, description: "Only in GET /habits list" }
+            frequencyStatus:
+              $ref: '#/components/schemas/FrequencyStatus'
+
+    PluginGoal:
+      type: object
+      nullable: true
+      description: |
+        Goal threshold for plugin-tracked habits. The poller checks the plugin's metric value against this threshold.
+        Use GET /plugins/:id/metrics to see available metrics per plugin.
+      properties:
+        metric:
+          type: string
+          description: "Metric key from plugin (e.g., steps, games_today, submissions_today, totalMinutes)"
+        operator:
+          type: string
+          enum: [gte, lte, eq]
+          description: "gte = at least, lte = at most, eq = exactly"
+        value:
+          type: number
+          description: "Target value"
+      examples:
+        - { metric: "steps", operator: "gte", value: 10000 }
+        - { metric: "games_today", operator: "gte", value: 3 }
+        - { metric: "totalMinutes", operator: "gte", value: 60 }
+
+    HabitLog:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        habitId: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        date: { type: string, format: date, description: "YYYY-MM-DD" }
+        completed: { type: boolean }
+        verificationSource:
+          type: string
+          enum: [manual, photo, leetcode, github, wakapi, google_fit, duolingo, screen_time, strava, chess_com, todoist]
+        proofUrl: { type: string, nullable: true }
+        pluginMetrics:
+          type: object
+          nullable: true
+          description: |
+            Raw metrics from the plugin, stored on every poll cycle (even when goal not met).
+            Keys vary per plugin:
+            - google_fit: { steps: 5000, activity_minutes: 15 }
+            - chess_com: { games_today: 4, latest_game_type: "rapid" }
+            - github: { total_events_today: 3, push_events_today: 2 }
+            - duolingo: { streak: 265, totalXp: 15572 }
+            - wakapi: { totalMinutes: 90, projects: [...] }
+            - strava: { total_distance_km: 3.5, total_duration_minutes: 25 }
+            - todoist: { tasks_completed_today: 3 }
+            - leetcode: { submissions_today: 2, latest_problem: "Two Sum" }
+
+            Frontend calculates ratio: pluginMetrics[pluginGoal.metric] / pluginGoal.value
+          additionalProperties: true
+        reflectionDifficulty:
+          type: integer
+          minimum: 1
+          maximum: 5
+          nullable: true
+        reflectionText: { type: string, nullable: true }
+        completedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    MemeGif:
+      type: object
+      nullable: true
+      description: Present when user has memes enabled. From Giphy API.
+      properties:
+        url: { type: string, description: "Full-size GIF URL" }
+        preview: { type: string, description: "Small preview GIF URL (for notification cards)" }
+
+    ErrorResponse:
+      type: object
+      properties:
+        status: { type: string, example: "error" }
+        error:
+          type: object
+          properties:
+            code: { type: string, example: "VALIDATION_ERROR" }
+            message: { type: string }

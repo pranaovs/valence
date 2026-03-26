@@ -1,0 +1,25 @@
+# Environment & secrets
+firebase-service-account.json
+PRD/valence-958c2-firebase-adminsdk-fbsvc-d161acacef.json
+PRD/client_secret_*.json
+
+# Dependencies
+node_modules/
+
+# Build output
+server/dist/
+server/drizzle/
+server/uploads/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
