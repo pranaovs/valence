@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
   firebase_core: ^3.13.0
   firebase_auth: ^5.5.2
   google_sign_in: ^6.3.0
